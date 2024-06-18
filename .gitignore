@@ -1,0 +1,13 @@
+# Common
+.env
+
+# Python
+__pycache__/
+venv/
+
+# JavaScript
+node_modules/
+
+# Database
+*.sqlite3
+
