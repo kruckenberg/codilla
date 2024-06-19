@@ -1,8 +1,12 @@
+{% load is_debug %}
 {% load static %}
 <html>
     <head>
-        <!-- <link rel="stylesheet" href="{% static 'css/styles.css' %}" /> -->
-        <link rel="stylesheet" href="../static/css/styles.css?{% now 'U' %}" />
+        {% if is_debug %}
+            <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+        {% else %}
+            <link rel="stylesheet" href="../static/css/styles.css?{% now 'U' %}" />
+        {% endif %}
         <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.5/dist/js/uikit.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.5/dist/js/uikit-icons.min.js"></script>
     </head>
