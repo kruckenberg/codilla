@@ -1,11 +1,14 @@
 {% load static %}
 <html>
-  <head>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.5/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.5/dist/js/uikit-icons.min.js"></script>
-  </head>
-  <body>
-    {% include 'common/navbar.html' %}
-  </body>
+    <head>
+        <!-- <link rel="stylesheet" href="{% static 'css/styles.css' %}" /> -->
+        <link rel="stylesheet" href="../static/css/styles.css?{% now 'U' %}" />
+        <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.5/dist/js/uikit.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.5/dist/js/uikit-icons.min.js"></script>
+    </head>
+    <body>
+        {% include 'common/navbar.html' %}
+        {% block page-content %}
+        {% endblock page-content %}
+    </body>
 </html>
