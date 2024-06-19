@@ -1,0 +1,29 @@
+{% extends "code_challenge/base.html" %}
+{% load static %}
+{% block editor %}
+    <div id="code-editor" class="h-full w-full bordered"></div>
+{% endblock editor %}
+<!-- Test Center -->
+{% block test-center %}
+    <textarea id="test-center" name="test-center" class="bordered p-2 w-full" rows="15" cols="80">
+assert()</textarea>
+{% endblock test-center %}
+<!-- Output -->
+{% block output %}
+    <textarea id="test-center" name="test-center" class="p-2 w-full" rows="15" cols="80">
+$>output</textarea>
+{% endblock output %}
+<!-- Instructions -->
+{% block instructions %}
+    <div class="w-full">
+        <div class="uk-card uk-card-body uk-height-1-1">
+            <h3 class="uk-card-title">
+                Name of Challenge
+            </h1>
+            <p class="uk-margin">
+                Create a function <code>addTwo</code> that takes two parameters and
+                returns . . .
+            </p>
+        </div>
+    </div>
+{% endblock instructions %}
