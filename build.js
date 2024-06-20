@@ -2,7 +2,9 @@ import esbuild from "esbuild";
 
 const buildJS = async () => {
   return esbuild.build({
-    entryPoints: {},
+    entryPoints: {
+      editor: "code_challenge/js/editor.js",
+    },
     bundle: true,
     minify: true,
     sourcemap: true,
