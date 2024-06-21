@@ -17,7 +17,8 @@
     "@codemirror/lang-python": "^6.1.6",
     "@codemirror/state": "^6.4.1",
     "@codemirror/view": "^6.28.1",
-    "codemirror": "^6.0.1"
+    "codemirror": "^6.0.1",
+    "thememirror": "^2.0.1"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.13",

@@ -8718,8 +8718,20 @@ th.uk-text-break, td.uk-text-break {
   margin: 0.25rem;
 }
 
+.m-28 {
+  margin: 7rem;
+}
+
 .mt-28 {
   margin-top: 7rem;
+}
+
+.mb-0 {
+  margin-bottom: 0px;
+}
+
+.mt-0 {
+  margin-top: 0px;
 }
 
 .block {
@@ -8760,6 +8772,27 @@ th.uk-text-break, td.uk-text-break {
 
 .h-full {
   height: 100%;
+}
+
+.h-fit {
+  height: -moz-fit-content;
+  height: fit-content;
+}
+
+.h-3 {
+  height: 0.75rem;
+}
+
+.h-\[calc\(100\%-0\.75rem\)\] {
+  height: calc(100% - 0.75rem);
+}
+
+.h-5 {
+  height: 1.25rem;
+}
+
+.h-\[calc\(100\%-1\.25rem\)\] {
+  height: calc(100% - 1.25rem);
 }
 
 .w-fit {

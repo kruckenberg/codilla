@@ -2,15 +2,23 @@ import { basicSetup } from "codemirror";
 import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 import { javascript } from "@codemirror/lang-javascript";
+import { dracula } from "thememirror";
 
-let theme = EditorView.theme({
-  "&": { height: "100%" },
-  ".cm-scroller": { overflow: "auto" },
+let extendTheme = EditorView.theme({
+  "&": {
+    height: "100%",
+    "border-radius": "5px",
+    fontSize: "1.25rem",
+  },
+  ".cm-scroller": {
+    "border-radius": "5px",
+    overflow: "auto",
+  },
 });
 
 let state = EditorState.create({
   doc: JSON.parse(document.getElementById("starterCode").textContent),
-  extensions: [basicSetup, theme, javascript()],
+  extensions: [basicSetup, dracula, extendTheme, javascript()],
 });
 
 let view = new EditorView({
