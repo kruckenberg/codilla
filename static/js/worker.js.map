@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../code_challenge/js/worker.js"],
+  "sourcesContent": ["onmessage = (msg) => {\n  let rawCode = msg.data;\n  let result = eval(rawCode);\n\n  postMessage(result);\n};\n"],
+  "mappings": "MAAA,UAAa,KAAQ,CACnB,IAAI,QAAU,IAAI,KACd,OAAS,KAAK,OAAO,EAEzB,YAAY,MAAM,CACpB",
+  "names": []
+}
