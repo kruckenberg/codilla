@@ -11,7 +11,7 @@ let extendTheme = EditorView.theme({
   "&": {
     height: "100%",
     "border-radius": "5px",
-    fontSize: "1.25rem",
+    fontSize: "1.15rem",
   },
   ".cm-scroller": {
     "border-radius": "5px",
@@ -19,14 +19,24 @@ let extendTheme = EditorView.theme({
   },
 });
 
-let state = EditorState.create({
+let editorState = EditorState.create({
   doc: JSON.parse(document.getElementById("starterCode").textContent),
   extensions: [basicSetup, dracula, extendTheme, javascript()],
 });
 
-let view = new EditorView({
-  state: state,
+let editorView = new EditorView({
+  state: editorState,
   parent: document.getElementById("code-editor"),
+});
+
+let outputState = EditorState.create({
+  doc: "",
+  extensions: [EditorState.readOnly.of(true), dracula, extendTheme],
+});
+
+let outputView = new EditorView({
+  state: outputState,
+  parent: document.getElementById("output"),
 });
 
 /*****************************************************
@@ -34,15 +44,23 @@ let view = new EditorView({
  ****************************************************/
 if (window.Worker) {
   const worker = new Worker("/static/js/worker.js");
-  const outputContainer = document.getElementById("output");
 
   worker.onmessage = (msg) => {
-    outputContainer.innerHTML = msg.data;
+    console.log(msg.data);
+    const consoleOutput =
+      msg.data && msg.data.length
+        ? msg.data.map(({ type, message }) => message.join(" ")).join("\n")
+        : "No console output";
+
+    outputView.setState(outputState);
+    outputView.dispatch({
+      changes: [{ from: 0, insert: consoleOutput }],
+    });
   };
 
   const runCodeButton = document.getElementById("run-code-button");
   runCodeButton.addEventListener("click", () => {
-    const rawCode = view.state.doc.toString();
-    worker.postMessage(rawCode);
+    const sourceCode = editorView.state.doc.toString();
+    worker.postMessage(sourceCode);
   });
 }
