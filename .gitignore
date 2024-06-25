@@ -8,6 +8,10 @@ venv/
 # JavaScript
 node_modules/
 
+# static
+static/css/
+static/js/
+
 # Database
 *.sqlite3
 

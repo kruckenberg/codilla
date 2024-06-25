@@ -46,7 +46,6 @@ if (window.Worker) {
   const worker = new Worker("/static/js/worker.js");
 
   worker.onmessage = (msg) => {
-    console.log(msg.data);
     const consoleOutput =
       msg.data && msg.data.length
         ? msg.data.map(({ type, message }) => message.join(" ")).join("\n")
