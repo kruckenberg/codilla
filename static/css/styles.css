@@ -8666,12 +8666,25 @@ th.uk-text-break, td.uk-text-break {
   position: sticky;
 }
 
+.inset-0 {
+  inset: 0px;
+}
+
+.inset-x-0 {
+  left: 0px;
+  right: 0px;
+}
+
 .left-0 {
   left: 0px;
 }
 
 .top-0 {
   top: 0px;
+}
+
+.bottom-0 {
+  bottom: 0px;
 }
 
 .col-span-2 {
@@ -8694,8 +8707,8 @@ th.uk-text-break, td.uk-text-break {
   grid-row: span 1 / span 1;
 }
 
-.row-span-3 {
-  grid-row: span 3 / span 3;
+.row-span-4 {
+  grid-row: span 4 / span 4;
 }
 
 .row-span-5 {
@@ -8706,10 +8719,6 @@ th.uk-text-break, td.uk-text-break {
   grid-row-start: 1;
 }
 
-.row-start-4 {
-  grid-row-start: 4;
-}
-
 .row-start-5 {
   grid-row-start: 5;
 }
@@ -8718,20 +8727,12 @@ th.uk-text-break, td.uk-text-break {
   margin: 0.25rem;
 }
 
-.m-28 {
-  margin: 7rem;
-}
-
 .mt-28 {
   margin-top: 7rem;
 }
 
 .mb-0 {
   margin-bottom: 0px;
-}
-
-.mt-0 {
-  margin-top: 0px;
 }
 
 .block {
@@ -8762,8 +8763,12 @@ th.uk-text-break, td.uk-text-break {
   height: 6rem;
 }
 
-.h-5\/6 {
-  height: 83.333333%;
+.h-5 {
+  height: 1.25rem;
+}
+
+.h-\[calc\(100\%-1\.25rem\)\] {
+  height: calc(100% - 1.25rem);
 }
 
 .h-\[calc\(100vh-9rem\)\] {
@@ -8774,25 +8779,28 @@ th.uk-text-break, td.uk-text-break {
   height: 100%;
 }
 
-.h-fit {
-  height: -moz-fit-content;
-  height: fit-content;
+.h-\[calc\(100\%-1\.4rem\)\] {
+  height: calc(100% - 1.4rem);
 }
 
-.h-3 {
-  height: 0.75rem;
+.h-\[calc\(100\%-1\.75rem\)\] {
+  height: calc(100% - 1.75rem);
 }
 
-.h-\[calc\(100\%-0\.75rem\)\] {
-  height: calc(100% - 0.75rem);
+.h-10 {
+  height: 2.5rem;
 }
 
-.h-5 {
-  height: 1.25rem;
+.h-8 {
+  height: 2rem;
 }
 
-.h-\[calc\(100\%-1\.25rem\)\] {
-  height: calc(100% - 1.25rem);
+.h-1\/6 {
+  height: 16.666667%;
+}
+
+.h-5\/6 {
+  height: 83.333333%;
 }
 
 .w-fit {
