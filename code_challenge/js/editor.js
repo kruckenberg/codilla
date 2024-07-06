@@ -3,6 +3,9 @@ import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 import { javascript } from "@codemirror/lang-javascript";
 import { dracula } from "thememirror";
+import { files } from "./fileSystem.js";
+
+import { exec, getWebContainer } from "./webContainer.js";
 
 /*****************************************************
  * Init codemirror editor
@@ -20,7 +23,7 @@ let extendTheme = EditorView.theme({
 });
 
 let editorState = EditorState.create({
-  doc: JSON.parse(document.getElementById("starterCode").textContent),
+  doc: files["source.js"].file.contents,
   extensions: [basicSetup, dracula, extendTheme, javascript()],
 });
 
@@ -39,27 +42,10 @@ let outputView = new EditorView({
   parent: document.getElementById("output"),
 });
 
-/*****************************************************
- * Create web worker, handler
- ****************************************************/
-if (window.Worker) {
-  const worker = new Worker("/static/js/worker.js");
+const runCodeButton = document.getElementById("run-code-button");
+runCodeButton.addEventListener("click", async () => {
+  const output = await exec(getWebContainer(), "node", ["source.js"]);
 
-  worker.onmessage = (msg) => {
-    const consoleOutput =
-      msg.data && msg.data.length
-        ? msg.data.map(({ type, message }) => message.join(" ")).join("\n")
-        : "No console output";
-
-    outputView.setState(outputState);
-    outputView.dispatch({
-      changes: [{ from: 0, insert: consoleOutput }],
-    });
-  };
-
-  const runCodeButton = document.getElementById("run-code-button");
-  runCodeButton.addEventListener("click", () => {
-    const sourceCode = editorView.state.doc.toString();
-    worker.postMessage(sourceCode);
-  });
-}
+  outputView.setState(outputState);
+  outputView.dispatch({ changes: [{ from: 0, insert: output }] });
+});

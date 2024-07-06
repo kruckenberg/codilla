@@ -3,6 +3,7 @@
 {% block editor %}
   {{ challenge.starter_code|json_script:"starterCode" }}
   <script src="{% static 'js/editor.js' %}" defer></script>
+  <!-- <script src="{% static 'js/webContainer.js' %}" defer></script> -->
   <div class="relative h-full w-full">
     <div id="code-editor" class="absolute h-full w-full"></div>
     <div class="absolute inset-x-0 bottom-0 flex flex-row justify-end w-full">

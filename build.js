@@ -4,7 +4,7 @@ const buildJS = async () => {
   return esbuild.build({
     entryPoints: {
       editor: "code_challenge/js/editor.js",
-      worker: "code_challenge/js/worker.js",
+      webContainer: "code_challenge/js/webContainer.js",
     },
     bundle: true,
     minify: true,
