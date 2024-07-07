@@ -1,3 +1,5 @@
+import { FileSystemTree } from "@webcontainer/api";
+
 const starterCode = `
 function addTwo(num) {
   return num + 2;
@@ -43,7 +45,7 @@ const packageJSON = JSON.stringify({
   },
 });
 
-export const files = {
+export const files: FileSystemTree = {
   "source.js": {
     file: {
       contents: starterCode,

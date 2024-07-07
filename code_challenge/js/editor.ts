@@ -3,9 +3,21 @@ import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 import { javascript } from "@codemirror/lang-javascript";
 import { dracula } from "thememirror";
-import { files } from "./fileSystem.js";
+import { files } from "./fileSystem";
+import { CodeContainer } from "./webContainer";
 
-import { CodeContainer } from "./webContainer.js";
+import type { FileNode } from "./types";
+
+/*****************************************************
+ * Get HTML elements
+ ****************************************************/
+const codeEditorEl = document.getElementById("code-editor");
+const outputEl = document.getElementById("output");
+const runCodeButtonEl = document.getElementById("run-code-button");
+
+if (!codeEditorEl || !outputEl || !runCodeButtonEl) {
+  throw new Error("Missing required HTML elements");
+}
 
 /*****************************************************
  * Init codemirror editor
@@ -23,13 +35,13 @@ let extendTheme = EditorView.theme({
 });
 
 let editorState = EditorState.create({
-  doc: files["source.js"].file.contents,
+  doc: (files["source.js"] as FileNode).file.contents as string,
   extensions: [basicSetup, dracula, extendTheme, javascript()],
 });
 
 let editorView = new EditorView({
   state: editorState,
-  parent: document.getElementById("code-editor"),
+  parent: codeEditorEl,
 });
 
 let initialOutputState = EditorState.create({
@@ -39,10 +51,10 @@ let initialOutputState = EditorState.create({
 
 let outputView = new EditorView({
   state: initialOutputState,
-  parent: document.getElementById("output"),
+  parent: outputEl,
 });
 
-function logToOutput(message) {
+function logToOutput(message: string) {
   outputView.dispatch({
     changes: [{ from: outputView.state.doc.length, insert: message }],
   });
@@ -60,8 +72,7 @@ const container = new CodeContainer({ files, logger: logToOutput });
 /*****************************************************
  * Action buttons
  ****************************************************/
-const runCodeButton = document.getElementById("run-code-button");
-runCodeButton.addEventListener("click", async () => {
+runCodeButtonEl.addEventListener("click", async () => {
   clearOutput();
   container.writeSource(editorView.state.doc.toString());
   container.runCode();

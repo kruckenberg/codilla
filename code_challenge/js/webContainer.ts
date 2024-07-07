@@ -1,10 +1,13 @@
 import { WebContainer } from "@webcontainer/api";
 import stripAnsi from "strip-ansi";
+import type { FileSystemTree, Logger } from "./types";
 
 export class CodeContainer {
-  container;
+  container: WebContainer;
+  files: FileSystemTree;
+  logger: Logger;
 
-  constructor({ files, logger }) {
+  constructor({ files, logger }: { files: FileSystemTree; logger: Logger }) {
     if (this.container) {
       throw new Error("WebContainer already initialized");
     }
@@ -23,8 +26,9 @@ export class CodeContainer {
         .pipeThrough(this._makeAnsiStripper())
         .pipeTo(this._makeWriter());
 
-      if (await response.exit) {
-        throw new Error("Process exited with code ", response.exit);
+      const exitCode = await response.exit;
+      if (exitCode) {
+        throw new Error(`Process exited with code ${exitCode}`);
       }
     } catch (error) {
       console.error(error);
@@ -32,7 +36,7 @@ export class CodeContainer {
     }
   }
 
-  async writeSource(code) {
+  async writeSource(code: string) {
     await this.container.fs.writeFile("source.js", code);
   }
 
@@ -45,7 +49,10 @@ export class CodeContainer {
 
   _makeAnsiStripper() {
     return new TransformStream({
-      transform: (chunk, controller) => controller.enqueue(stripAnsi(chunk)),
+      transform: (
+        chunk: string,
+        controller: TransformStreamDefaultController,
+      ) => controller.enqueue(stripAnsi(chunk)),
     });
   }
 

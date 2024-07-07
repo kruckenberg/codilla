@@ -3,8 +3,8 @@ import esbuild from "esbuild";
 const buildJS = async () => {
   return esbuild.build({
     entryPoints: {
-      editor: "code_challenge/js/editor.js",
-      webContainer: "code_challenge/js/webContainer.js",
+      editor: "code_challenge/js/editor.ts",
+      webContainer: "code_challenge/js/webContainer.ts",
     },
     bundle: true,
     minify: true,
