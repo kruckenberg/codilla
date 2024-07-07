@@ -1,50 +1,56 @@
 import { WebContainer } from "@webcontainer/api";
-import { files } from "./fileSystem";
+import stripAnsi from "strip-ansi";
 
-/**
- * Needed to remove ANSI escape codes from the output.
- * In future: use `strip-ansi` package?
- */
-export default function ansiRegex({ onlyFirst = false } = {}) {
-  const pattern = [
-    "[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)",
-    "(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-nq-uy=><~]))",
-  ].join("|");
+export class CodeContainer {
+  container;
 
-  return new RegExp(pattern, onlyFirst ? undefined : "g");
-}
-
-export async function exec(container, command, args) {
-  try {
-    let response = await container.spawn(command, args);
-
-    let output = "";
-
-    response.output.pipeTo(
-      new WritableStream({
-        async write(chunk) {
-          output += chunk.toString().replace(ansiRegex(), "");
-        },
-      }),
-    );
-
-    if (await response.exit) {
-      throw new Error("Command failed");
+  constructor({ files, logger }) {
+    if (this.container) {
+      throw new Error("WebContainer already initialized");
     }
 
-    return output;
-  } catch (error) {
-    console.error(error);
+    this.files = files;
+    this.logger = logger;
+
+    this.init();
+  }
+
+  async runCode() {
+    try {
+      const response = await this.container.spawn("node", ["source.js"]);
+
+      response.output
+        .pipeThrough(this._makeAnsiStripper())
+        .pipeTo(this._makeWriter());
+
+      if (await response.exit) {
+        throw new Error("Process exited with code ", response.exit);
+      }
+    } catch (error) {
+      console.error(error);
+      this.logger(error?.message || "Something went wrong");
+    }
+  }
+
+  async writeSource(code) {
+    await this.container.fs.writeFile("source.js", code);
+  }
+
+  async init() {
+    this.container = await WebContainer.boot();
+    console.log("WebContainer booted.");
+    await this.container.mount(this.files);
+    console.log("File system mounted.");
+  }
+
+  _makeAnsiStripper() {
+    return new TransformStream({
+      transform: (chunk, controller) => controller.enqueue(stripAnsi(chunk)),
+    });
+  }
+
+  _makeWriter() {
+    const logger = this.logger;
+    return new WritableStream({ write: logger });
   }
 }
-
-let webContainer;
-
-export function getWebContainer() {
-  return webContainer;
-}
-
-window.addEventListener("load", async () => {
-  webContainer = await WebContainer.boot();
-  await webContainer.mount(files);
-});

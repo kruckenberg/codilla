@@ -34,14 +34,14 @@ try {
   console.error(error);
 }`.trim();
 
-const packageJSON = `
-{
-   "name": "codilla",
-   "type": "module",
-   "dependencies": {},
-      "scripts": {
-   }
-}`.trim();
+const packageJSON = JSON.stringify({
+  name: "codilla",
+  type: "module",
+  dependencies: {},
+  scripts: {
+    runCode: "node source.js",
+  },
+});
 
 export const files = {
   "source.js": {
