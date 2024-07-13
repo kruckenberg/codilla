@@ -2,10 +2,20 @@ import autoprefixer from "autoprefixer";
 import presetQuick from "franken-ui/shadcn-ui/preset-quick";
 
 export default {
-  content: ["**/templates/**/*.{html,js}"],
+  content: ["**/templates/**/*.html", "**/js/*.{js,ts}"],
   theme: {
-    extend: {},
+    extend: {
+      typography: {
+        DEFAULT: {
+          css: {
+            code: { backgroundColor: "#f4f4f4", color: "#c7254e" },
+            "code::before": { content: "" },
+            "code::after": { content: "" },
+          },
+        },
+      },
+    },
   },
-  plugins: [require("@tailwindcss/typography"), autoprefixer],
+  plugins: [require("@tailwindcss/typography")(), autoprefixer],
   presets: [presetQuick({ theme: "green" })],
 };
