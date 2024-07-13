@@ -1,0 +1,27 @@
+{% extends "code_challenge/base_terminal.html" %}
+{% load static %}
+{% block terminal %}
+  {{ challenge.starter_code|json_script:"starterCode" }}
+  <script src="{% static 'js/terminal.js' %}" defer></script>
+  <div class="relative h-full w-full">
+    <div id="terminal" class="absolute h-full w-full terminal"></div>
+    <div class="absolute inset-x-0 bottom-0 flex flex-row justify-end w-full">
+      <button id="complete-button" class="uk-button uk-button-primary m-1">Complete</button>
+      <button class="uk-button uk-button-default m-1">Clear</button>
+    </div>
+  </div>
+{% endblock terminal %}
+<!-- Instructions -->
+{% block instructions %}
+  <style>
+  .instruct {
+    padding: 0.5rem;
+  }
+  </style>
+  <div class="w-full instruct">
+    <div class="uk-card uk-card-body uk-height-1-1 overflow-auto">
+      <h1 class="uk-card-title uk-h1">Challenge: {{ challenge.title }}</h1>
+      <article class="prose uk-margin">{{ challenge.instructions |safe }}</article>
+    </div>
+  </div>
+{% endblock instructions %}

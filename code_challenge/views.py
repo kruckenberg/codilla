@@ -1,4 +1,5 @@
 from django.shortcuts import render
+import markdown
 
 
 def index(request):
@@ -24,3 +25,19 @@ def index(request):
     }
 
     return render(request, "code_challenge/index.html", context=context)
+
+
+def terminal(request):
+    with open(
+        "code_challenge/challenges/fancy_calculator.md", "r", encoding="utf-8"
+    ) as file:
+        instructions_markdown = file.read()
+
+    context = {
+        "challenge": {
+            "title": "A fancy calculator",
+            "instructions": markdown.markdown(instructions_markdown),
+        }
+    }
+
+    return render(request, "code_challenge/terminal.html", context=context)

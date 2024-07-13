@@ -68,6 +68,7 @@ function clearOutput() {
  * Container setup
  ****************************************************/
 const container = new CodeContainer({ files, logger: logToOutput });
+container.init();
 
 /*****************************************************
  * Action buttons

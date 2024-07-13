@@ -1,6 +1,11 @@
 import { WebContainer } from "@webcontainer/api";
 import stripAnsi from "strip-ansi";
-import type { FileSystemTree, Logger } from "./types";
+import type {
+  FileSystemTree,
+  Logger,
+  Terminal,
+  WebContainerProcess,
+} from "./types";
 
 export class CodeContainer {
   container: WebContainer;
@@ -14,8 +19,6 @@ export class CodeContainer {
 
     this.files = files;
     this.logger = logger;
-
-    this.init();
   }
 
   async runCode() {
@@ -36,15 +39,36 @@ export class CodeContainer {
     }
   }
 
+  async startShell(terminal: Terminal): Promise<WebContainerProcess> {
+    const shellProcess = await this.container.spawn("jsh");
+    shellProcess.output.pipeTo(
+      new WritableStream({
+        write(data) {
+          terminal.write(data);
+        },
+      }),
+    );
+
+    const input = shellProcess.input.getWriter();
+    terminal.onData((data: string) => {
+      input.write(data);
+    });
+
+    terminal.input("node\n");
+    terminal.focus();
+
+    return shellProcess;
+  }
+
   async writeSource(code: string) {
     await this.container.fs.writeFile("source.js", code);
   }
 
   async init() {
-    this.container = await WebContainer.boot();
-    console.log("WebContainer booted.");
-    await this.container.mount(this.files);
-    console.log("File system mounted.");
+    if (!this.container) {
+      this.container = await WebContainer.boot();
+      await this.container.mount(this.files);
+    }
   }
 
   _makeAnsiStripper() {
