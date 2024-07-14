@@ -14,8 +14,9 @@ import type { FileNode } from "./types";
 const codeEditorEl = document.getElementById("code-editor");
 const outputEl = document.getElementById("output");
 const runCodeButtonEl = document.getElementById("run-code-button");
+const testCodeButtonEl = document.getElementById("test-code-button");
 
-if (!codeEditorEl || !outputEl || !runCodeButtonEl) {
+if (!codeEditorEl || !outputEl || !runCodeButtonEl || !testCodeButtonEl) {
   throw new Error("Missing required HTML elements");
 }
 
@@ -77,4 +78,10 @@ runCodeButtonEl.addEventListener("click", async () => {
   clearOutput();
   container.writeSource(editorView.state.doc.toString());
   container.runCode();
+});
+
+testCodeButtonEl.addEventListener("click", async () => {
+  clearOutput();
+  container.writeSource(editorView.state.doc.toString());
+  container.runTest();
 });
