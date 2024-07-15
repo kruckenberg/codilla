@@ -1,5 +1,6 @@
 import { WebContainer } from "@webcontainer/api";
 import stripAnsi from "strip-ansi";
+import { addExports } from "./codeAnalysis";
 import type {
   FileSystemTree,
   Logger,
@@ -40,9 +41,14 @@ export class CodeContainer {
   }
 
   async runTest() {
-    let source = await this.container.fs.readFile("source.js", "utf-8");
-    source = `console.log = () => null; ${source} export { addTwo, map };`;
-    await this.container.fs.writeFile("source.js", source);
+    try {
+      let source = await this.container.fs.readFile("source.js", "utf-8");
+      source = `console.log = function () {}; ${addExports(source, ["addTwo", "map"])}`;
+      await this.container.fs.writeFile("source.js", source);
+    } catch (error) {
+      this.logger(error?.message || "Something went wrong");
+      return;
+    }
 
     const response = await this.container.spawn("node", ["test.js"]);
     response.output
