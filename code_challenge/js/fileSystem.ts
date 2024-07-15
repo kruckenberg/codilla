@@ -1,4 +1,6 @@
 import { FileSystemTree } from "@webcontainer/api";
+import testUtils from "./testUtils.js";
+import testRunner from "./testRunner.js";
 
 const starterCode = `
 function addTwo(num) {
@@ -19,30 +21,19 @@ function map(arr, callback) {
 console.log(map([1, 2, 3], addTwo));`.trim();
 
 const testCode = `
-import { strict as assert } from 'node:assert';
+import { run, test } from './testRunner.js';
+import { isFunction, evaluatesTo } from './testUtils.js';
+import { addTwo } from './source.js';
 
-assert(typeof addTwo === 'function', 'addTwo should be a function');
-assert(addTwo(2) === 5, 'addTwo(2) should return 4');`.trim();
-
-const testExecutor = `
-import { readFile } from "fs/promises";
-
-const [sourceCode, testCode] = await Promise.all([fs.readFile("source.js", "utf-8"), fs.readFile("test.js", "utf-8")]);
-
-try {
-  eval(\${sourceCode} \${testCode});
-  console.log("All tests passed");
-} catch (error) {
-  console.error(error);
-}`.trim();
+test('addTwo should be a function', isFunction(addTwo));
+test('addTwo should add two to a number', evaluatesTo(addTwo, [2], 4));
+run();`;
 
 const packageJSON = JSON.stringify({
   name: "codilla",
   type: "module",
   dependencies: {},
-  scripts: {
-    runCode: "node source.js",
-  },
+  scripts: {},
 });
 
 export const files: FileSystemTree = {
@@ -61,9 +52,14 @@ export const files: FileSystemTree = {
       contents: testCode,
     },
   },
-  "testExecutor.js": {
+  "testRunner.js": {
     file: {
-      contents: testExecutor,
+      contents: testRunner,
+    },
+  },
+  "testUtils.js": {
+    file: {
+      contents: testUtils,
     },
   },
 };

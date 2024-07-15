@@ -26,8 +26,8 @@ export class CodeContainer {
       const response = await this.container.spawn("node", ["source.js"]);
 
       response.output
-        .pipeThrough(this._makeAnsiStripper())
-        .pipeTo(this._makeWriter());
+        .pipeThrough(this.makeAnsiStripper())
+        .pipeTo(this.makeWriter());
 
       const exitCode = await response.exit;
       if (exitCode) {
@@ -37,6 +37,17 @@ export class CodeContainer {
       console.error(error);
       this.logger(error?.message || "Something went wrong");
     }
+  }
+
+  async runTest() {
+    let source = await this.container.fs.readFile("source.js", "utf-8");
+    source = `console.log = () => null; ${source} export { addTwo, map };`;
+    await this.container.fs.writeFile("source.js", source);
+
+    const response = await this.container.spawn("node", ["test.js"]);
+    response.output
+      .pipeThrough(this.makeAnsiStripper())
+      .pipeTo(this.makeWriter());
   }
 
   async startShell(terminal: Terminal): Promise<WebContainerProcess> {
@@ -71,7 +82,7 @@ export class CodeContainer {
     }
   }
 
-  _makeAnsiStripper() {
+  private makeAnsiStripper() {
     return new TransformStream({
       transform: (
         chunk: string,
@@ -80,7 +91,7 @@ export class CodeContainer {
     });
   }
 
-  _makeWriter() {
+  private makeWriter() {
     const logger = this.logger;
     return new WritableStream({ write: logger });
   }
