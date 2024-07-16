@@ -3,6 +3,7 @@ import stripAnsi from "strip-ansi";
 import { addExports } from "./codeAnalysis";
 import type {
   FileSystemTree,
+  JSONReport,
   Logger,
   Terminal,
   WebContainerProcess,
@@ -20,6 +21,11 @@ export class CodeContainer {
 
     this.files = files;
     this.logger = logger;
+  }
+
+  async installDependencies() {
+    const installProcess = await this.container.spawn("npm", ["install"]);
+    return installProcess.exit;
   }
 
   async runCode() {
@@ -40,20 +46,49 @@ export class CodeContainer {
     }
   }
 
+  async reportTestResults() {
+    let results: JSONReport;
+
+    try {
+      results = JSON.parse(
+        await this.container.fs.readFile("test-results.json", "utf-8"),
+      );
+    } catch (error) {
+      this.logger("Test results not found or not parsed.");
+      return;
+    }
+
+    for (const result of results.tests) {
+      if (result.err.message) {
+        this.logger(`✗ ${result.fullTitle}\n`);
+      } else {
+        this.logger(`✓ ${result.fullTitle}\n`);
+      }
+    }
+    this.logger(
+      `\n-------------------------------------\n${results.stats.passes} passes, ${results.stats.failures} failures\n`,
+    );
+  }
+
   async runTest() {
     try {
       let source = await this.container.fs.readFile("source.js", "utf-8");
-      source = `console.log = function () {}; ${addExports(source, ["addTwo", "map"])}`;
+      // source = `console.log = function () {}; ${addExports(source, ["addTwo", "map"])}`;
+      source = `${addExports(source, ["addTwo", "map"])}`;
       await this.container.fs.writeFile("source.js", source);
     } catch (error) {
       this.logger(error?.message || "Something went wrong");
       return;
     }
 
-    const response = await this.container.spawn("node", ["test.js"]);
-    response.output
-      .pipeThrough(this.makeAnsiStripper())
-      .pipeTo(this.makeWriter());
+    const response = await this.container.spawn("npm", ["test"]);
+
+    if (await response.exit) {
+      this.logger("Something went wrong while running tests");
+      return;
+    }
+
+    this.reportTestResults();
   }
 
   async startShell(terminal: Terminal): Promise<WebContainerProcess> {
@@ -85,6 +120,7 @@ export class CodeContainer {
     if (!this.container) {
       this.container = await WebContainer.boot();
       await this.container.mount(this.files);
+      await this.installDependencies();
     }
   }
 

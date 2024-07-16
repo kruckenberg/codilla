@@ -76,12 +76,12 @@ container.init();
  ****************************************************/
 runCodeButtonEl.addEventListener("click", async () => {
   clearOutput();
-  container.writeSource(editorView.state.doc.toString());
+  await container.writeSource(editorView.state.doc.toString());
   container.runCode();
 });
 
 testCodeButtonEl.addEventListener("click", async () => {
   clearOutput();
-  container.writeSource(editorView.state.doc.toString());
+  await container.writeSource(editorView.state.doc.toString());
   container.runTest();
 });

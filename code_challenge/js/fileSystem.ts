@@ -1,6 +1,4 @@
 import { FileSystemTree } from "@webcontainer/api";
-import testUtils from "./testUtils.js";
-import testRunner from "./testRunner.js";
 
 const starterCode = `
 function addTwo(num) {
@@ -20,22 +18,37 @@ function map(arr, callback) {
 
 console.log(map([1, 2, 3], addTwo));`.trim();
 
-const testCode = `
-import { run, test } from './testRunner.js';
-import { isFunction, evaluatesTo } from './testUtils.js';
+const mochaTest = `
+import { expect } from 'chai';
 import { addTwo, map } from './source.js';
 
-test('addTwo should be a function', isFunction(addTwo));
-test('addTwo should add two to a number', evaluatesTo(addTwo, [2], 4));
-test('map should be a function', isFunction(map));
-// test('map should map an array', evaluatesTo(map, [[1, 2, 3], addTwo], [3, 4, 5]));
-run();`;
+describe('addTwo', function () {
+  it("should be a function", function () { 
+    expect(addTwo).to.be.a('function');
+  });
+  it("should add two to a number", function () { 
+    expect(addTwo(2)).to.equal(4);
+  });
+});
+`;
+
+const mochaConfig = `{
+  "reporter": "json",
+  "reporterOptions": [
+    "output=./test-results.json"
+  ]
+}`;
 
 const packageJSON = JSON.stringify({
   name: "codilla",
   type: "module",
-  dependencies: {},
-  scripts: {},
+  dependencies: {
+    chai: "^5.1.1",
+    mocha: "^10.6.0",
+  },
+  scripts: {
+    test: "mocha test.js",
+  },
 });
 
 export const files: FileSystemTree = {
@@ -49,19 +62,14 @@ export const files: FileSystemTree = {
       contents: packageJSON,
     },
   },
+  ".mocharc.json": {
+    file: {
+      contents: mochaConfig,
+    },
+  },
   "test.js": {
     file: {
-      contents: testCode,
-    },
-  },
-  "testRunner.js": {
-    file: {
-      contents: testRunner,
-    },
-  },
-  "testUtils.js": {
-    file: {
-      contents: testUtils,
+      contents: mochaTest,
     },
   },
 };
