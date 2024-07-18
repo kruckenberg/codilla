@@ -92,7 +92,9 @@ export class CodeContainer {
   }
 
   async startShell(terminal: Terminal): Promise<WebContainerProcess> {
-    const shellProcess = await this.container.spawn("jsh");
+    const shellProcess = await this.container.spawn("jsh", {
+      terminal: { cols: terminal.cols, rows: terminal.rows },
+    });
     shellProcess.output.pipeTo(
       new WritableStream({
         write(data) {

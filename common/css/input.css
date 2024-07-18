@@ -1,10 +1,7 @@
 @import "@xterm/xterm/css/xterm.css";
 @import "./code_highlight.css";
+@import "../../code_challenge/css/styles.css";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-.terminal {
-  padding: 1rem;
-}

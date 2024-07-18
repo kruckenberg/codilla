@@ -1,16 +1,16 @@
 {% extends "common/base.html" %}
 {% block page-content %}
-    <div id="challenge-container">
-        <div class="uk-margin-left uk-margin-right grid grid-cols-5 grid-rows-5 gap-4 w-fit h-[calc(100vh-9rem)] mt-28">
-            <div class="col-span-3 row-span-4 h-full">
-                {% block editor %}{% endblock %}
-            </div>
-            <div class="col-span-3 row-span-1 col-start-1 row-start-5">
-                {% block output %}{% endblock %}
-            </div>
-            <div class="col-span-2 row-span-5 col-start-4 row-start-1">
-                {% block instructions %}{% endblock %}
-            </div>
-        </div>
+  <div id="challenge-container w-full">
+    <div class="uk-margin-left uk-margin-right grid grid-cols-5 grid-rows-5 gap-4 h-[calc(100vh-9rem)] mt-28">
+      <div class="col-span-3 row-span-4 h-full">
+        {% block editor %}{% endblock %}
+      </div>
+      <div class="col-span-3 row-span-1 col-start-1 row-start-5 h-full">
+        {% block output %}{% endblock %}
+      </div>
+      <div class="col-span-2 row-span-5 col-start-4 row-start-1 h-full">
+        {% block instructions %}{% endblock %}
+      </div>
     </div>
+  </div>
 {% endblock page-content %}

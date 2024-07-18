@@ -15,7 +15,7 @@ as a fancy calculator. Give it a try! Use the `+`, `-`, `*`, and `/` operators
 to do a little arithmetic.
 
 Does it follow the order of operations? Can you change the result by adding
-parentheses?:w
+parentheses?
 
 Take note of anything that surprises or perplexes you.
 
