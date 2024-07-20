@@ -98,6 +98,12 @@ export class CodeContainer {
     shellProcess.output.pipeTo(
       new WritableStream({
         write(data) {
+          // Hack to clear shell startup output
+          if (data.includes('Type ".help" for more information')) {
+            terminal.clear();
+            terminal.focus();
+            return;
+          }
           terminal.write(data);
         },
       }),
@@ -108,8 +114,7 @@ export class CodeContainer {
       input.write(data);
     });
 
-    terminal.input("node\n");
-    terminal.focus();
+    terminal.input("node\n", false);
 
     return shellProcess;
   }

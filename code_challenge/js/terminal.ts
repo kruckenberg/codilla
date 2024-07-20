@@ -8,8 +8,9 @@ import type { WebContainerProcess } from "./types";
  ****************************************************/
 const terminalEl = document.getElementById("terminal");
 const completeButtonEl = document.getElementById("complete-button");
+const clearButtonEl = document.getElementById("clear-button");
 
-if (!terminalEl || !completeButtonEl) {
+if (!terminalEl || !completeButtonEl || !clearButtonEl) {
   throw new Error("Missing required HTML elements");
 }
 
@@ -51,7 +52,15 @@ fitAddon.fit();
 // Responsive terminal sizing
 window.addEventListener("resize", () => {
   fitAddon.fit();
-  shellProcess.resize({ cols: terminal.cols, rows: terminal.rows });
+  shellProcess &&
+    shellProcess.resize({ cols: terminal.cols, rows: terminal.rows });
+});
+
+clearButtonEl.addEventListener("click", () => {
+  terminal.clear();
+  setTimeout(() => {
+    terminal.focus();
+  }, 0);
 });
 
 startTerminal();
