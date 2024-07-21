@@ -16,7 +16,7 @@ def custom_serve(request, path, insecure=False, **kwargs):
 
 
 urlpatterns = [
-    path("challenge/", include("code_challenge.urls")),
+    path("", include("code_challenge.urls")),
     path("admin/", admin.site.urls),
     path("account/", include("account.urls")),
     *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT, view=custom_serve),

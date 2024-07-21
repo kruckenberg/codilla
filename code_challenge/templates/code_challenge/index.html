@@ -1,27 +1,16 @@
-{% extends "code_challenge/base.html" %}
+{% extends "common/base.html" %}
 {% load static %}
-{% block editor %}
-  {{ challenge.starter_code|json_script:"starterCode" }}
-  <script src="{% static 'js/editor.js' %}" defer></script>
-  <div class="relative h-full w-full">
-    <div id="code-editor" class="absolute h-full w-full"></div>
-    <div class="absolute inset-x-0 bottom-0 flex flex-row justify-end w-full">
-      <button id="run-code-button" class="uk-button uk-button-primary m-1">Run</button>
-      <button id="test-code-button" class="uk-button uk-button-primary m-1">Test</button>
-      <button class="uk-button uk-button-default m-1">Reset Code</button>
-    </div>
-  </div>
-{% endblock editor %}
-<!-- Output -->
-{% block output %}
-  <div id="output" class="h-full w-full"></div>
-{% endblock output %}
-<!-- Instructions -->
-{% block instructions %}
-  <div class="w-full">
-    <div class="uk-card uk-card-body uk-height-1-1 overflow-auto">
-      <h1 class="uk-card-title uk-h1">Challenge: {{ challenge.title }}</h1>
-      <article class="prose uk-margin">{{ challenge.instructions |safe }}</article>
-    </div>
-  </div>
-{% endblock instructions %}
+{% block page-content %}
+  <ul>
+    <li>Let's Explore</li>
+    <ul>
+      <li>
+        <a href="/intro-javascript/explore/terminal">Fancy Calculator</a>
+      </li>
+      <li>R.E.P.L. Wizard</li>
+    </ul>
+    <li>Data Types</li>
+    <li>Numbers</li>
+    <li>Strings</li>
+  </ul>
+{% endblock page-content %}
