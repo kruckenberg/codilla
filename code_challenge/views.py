@@ -4,60 +4,48 @@ import markdown
 from .importer.build_courses import courses
 
 
-def index(request, course_slug="", unit_slug=""):
-    intro_javascript = {
-        "title": "Introduction to JavaScript",
-        "units": [
-            {
-                "title": "Explore",
-                "lessons": [
-                    "REPL: A fancy calculator",
-                    "REPL Wiz",
-                    "REPL: recalling the last value",
-                ],
-            },
-            {
-                "title": "Data Types",
-                "lessons": ["strings", "numbers", "booleans", "null and undefined"],
-            },
-        ],
-        "status": "in progress",
-    }
+def get_course(course_slug):
+    course = courses.get(course_slug)
 
-    intro_html = {
-        "title": "Introduction to HTML",
-        "units": [
-            {
-                "title": "How the Web Works",
-                "lessons": ["the internet", "the web", "request-response cycle"],
-            },
-            {"title": "hyptertext", "lessons": ["HTML", "elements", "attributes"]},
-            {"title": "structure", "lessons": ["head", "body", "title"]},
-            {"title": "text", "lessons": ["headings", "paragraphs", "lists"]},
-        ],
-        "status": "completed",
-    }
+    if not course:
+        raise Http404()
 
-    courses = [intro_javascript, intro_html, intro_javascript, intro_html]
+    return course
 
-    if not course_slug:
-        return render(
-            request, "code_challenge/courses.html", context={"courses": courses}
-        )
 
-    return render(request, "code_challenge/index.html")
+def courses_index(request):
+    return render(
+        request,
+        "code_challenge/courses.html",
+        context={"courses": list(courses.values())},
+    )
+
+
+def units_index(request, course_slug=""):
+    course = get_course(course_slug)
+    return render(
+        request,
+        "code_challenge/units.html",
+        context={"course": course},
+    )
+
+
+def lessons_index(request, course_slug="", unit_slug=""):
+    course = get_course(course_slug)
+    unit = course.get_unit(unit_slug)
+
+    if not unit:
+        raise Http404()
+
+    return render(request, "code_challenge/lessons.html", context={"unit": unit})
 
 
 def lesson(request, course_slug="", unit_slug="", lesson_slug=""):
-    course = courses[course_slug]
-
-    if not course:
-        raise Http404("Lesson not found")
-
+    course = get_course(course_slug)
     lesson = course.get_lesson(unit_slug, lesson_slug)
 
     if not lesson:
-        raise Http404("Lesson not found")
+        raise Http404()
 
     if lesson.type == "editor":
         return render_editor(request, lesson)

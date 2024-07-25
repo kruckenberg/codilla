@@ -16,11 +16,11 @@ def build_course(course_dir: str) -> Course:
     )
 
     for unit_dir in unit_dirs:
-        unit = Unit(unit_dir)
+        unit = Unit(unit_dir, course)
         course.add_unit(unit)
         for lesson_dir in sorted(os.listdir(unit_dir)):
             if os.path.isdir(os.path.join(unit_dir, lesson_dir)):
-                lesson = Lesson(os.path.join(unit_dir, lesson_dir))
+                lesson = Lesson(os.path.join(unit_dir, lesson_dir), unit)
                 unit.add_lesson(lesson)
 
     return course

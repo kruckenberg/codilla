@@ -3,7 +3,9 @@ import json
 
 
 class Lesson:
-    def __init__(self, directory: str):
+    def __init__(self, directory: str, parent):
+        self.parent = parent
+
         try:
             with open(os.path.join(directory, "meta.json"), "r") as file:
                 self._metadata = file.read()
@@ -13,11 +15,12 @@ class Lesson:
         except json.JSONDecodeError:
             raise ValueError("Invalid JSON metadata")
 
-        self.title = self._metadata["title"]
-        self.slug = self._metadata["slug"]
-        self.type = self._metadata["type"]
-        self.version = self._metadata["version"]
-        self.tests = self._metadata["tests"]
+        self.title = self._metadata.get("title")
+        self.slug = self._metadata.get("slug")
+        self.type = self._metadata.get("type")
+        self.version = self._metadata.get("version")
+        self.tests = self._metadata.get("tests")
+        self.link = f"{parent.link}/{self.slug}"
 
         self.sourceFile = self.read_file(os.path.join(directory, "source.js"))
         self.testFile = self.read_file(os.path.join(directory, "test.js"))
@@ -34,7 +37,7 @@ class Lesson:
 
 
 class Unit:
-    def __init__(self, directory: str):
+    def __init__(self, directory: str, parent):
         try:
             with open(os.path.join(directory, "meta.json"), "r") as file:
                 self._metadata = file.read()
@@ -44,8 +47,9 @@ class Unit:
         except json.JSONDecodeError:
             raise ValueError("Invalid JSON metadata")
 
-        self.title = self._metadata["title"]
-        self.slug = self._metadata["slug"]
+        self.title = self._metadata.get("title")
+        self.slug = self._metadata.get("slug")
+        self.link = f"{parent.link}/{self.slug}"
         self._lessons = []
 
     def add_lesson(self, lesson: Lesson):
@@ -75,9 +79,10 @@ class Course:
         except json.JSONDecodeError:
             raise ValueError("Invalid JSON metadata")
 
-        self.title = self._metadata["title"]
-        self.slug = self._metadata["slug"]
-        self.version = self._metadata["version"]
+        self.title = self._metadata.get("title")
+        self.slug = self._metadata.get("slug")
+        self.version = self._metadata.get("version")
+        self.link = f"/{self.slug}"
         self._units = []
 
     def add_unit(self, unit):
