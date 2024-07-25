@@ -2,6 +2,11 @@
   padding: 0.5rem;
 }
 
+.instruct h1 {
+  @apply uk-card-title;
+  @apply uk-h1;
+}
+
 .terminal {
   padding: 1rem;
 }
