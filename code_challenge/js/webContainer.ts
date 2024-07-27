@@ -126,7 +126,10 @@ export class CodeContainer {
     if (!this.container) {
       this.container = await WebContainer.boot();
       await this.container.mount(this.files);
-      await this.installDependencies();
+      // only install dependencies if tests exist
+      if (this.files?.["test.js"]) {
+        await this.installDependencies();
+      }
     }
   }
 
