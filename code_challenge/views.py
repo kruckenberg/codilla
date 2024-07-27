@@ -13,6 +13,19 @@ def get_course(course_slug):
     return course
 
 
+def get_serializable_user(request):
+    if request.user.is_authenticated:
+        user = {
+            "id": request.user.id,
+            "username": request.user.username,
+            "first_name": request.user.first_name,
+            "last_name": request.user.last_name,
+        }
+    else:
+        user = {"id": 0, "username": "", "first_name": "", "last_name": ""}
+    return user
+
+
 def courses_index(request):
     return render(
         request,
@@ -61,10 +74,11 @@ def render_editor(request, lesson):
     context = {
         "challenge": {
             "title": lesson.title,
+            "file_system": lesson.file_system,
             "instructions": markdown.markdown(
-                lesson.instructionsFile, extensions=["fenced_code", "codehilite"]
+                lesson.instructions_file, extensions=["fenced_code", "codehilite"]
             ),
-            "starter_code": lesson.sourceFile,
+            "user": get_serializable_user(request),
         }
     }
 
@@ -76,8 +90,9 @@ def render_terminal(request, lesson):
         "challenge": {
             "title": lesson.title,
             "instructions": markdown.markdown(
-                lesson.instructionsFile, extensions=["fenced_code", "codehilite"]
+                lesson.instructions_file, extensions=["fenced_code", "codehilite"]
             ),
+            "user": get_serializable_user(request),
         }
     }
 

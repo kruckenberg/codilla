@@ -22,18 +22,61 @@ class Lesson:
         self.tests = self._metadata.get("tests")
         self.link = f"{parent.link}/{self.slug}"
 
-        self.sourceFile = self.read_file(os.path.join(directory, "source.js"))
-        self.testFile = self.read_file(os.path.join(directory, "test.js"))
-        self.instructionsFile = self.read_file(
+        self.source_file = self.read_file(os.path.join(directory, "source.js"))
+        self.test_file = self.read_file(os.path.join(directory, "test.js"))
+        self.instructions_file = self.read_file(
             os.path.join(directory, "instructions.md")
         )
+        self.file_system = self.create_file_system()
 
     def read_file(self, filename):
         try:
             with open(filename, "r") as file:
                 return file.read()
         except FileNotFoundError:
-            return None
+            return ""
+
+    def create_file_system(self):
+        mochaConfig = json.dumps(
+            {"reporter": "json", "reporterOptions": ["output=./test-results.json"]}
+        )
+
+        packageJSON = json.dumps(
+            {
+                "name": "codilla",
+                "type": "module",
+                "dependencies": {
+                    "chai": "^5.1.1",
+                    "mocha": "^10.6.0",
+                },
+                "scripts": {
+                    "test": "mocha test.js",
+                },
+            }
+        )
+
+        return {
+            "source.js": {
+                "file": {
+                    "contents": self.source_file,
+                },
+            },
+            "package.json": {
+                "file": {
+                    "contents": packageJSON,
+                },
+            },
+            ".mocharc.json": {
+                "file": {
+                    "contents": mochaConfig,
+                },
+            },
+            "test.js": {
+                "file": {
+                    "contents": self.test_file,
+                },
+            },
+        }
 
 
 class Unit:

@@ -3,9 +3,7 @@ import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 import { javascript } from "@codemirror/lang-javascript";
 import { dracula } from "thememirror";
-import { files } from "./fileSystem";
 import { CodeContainer } from "./webContainer";
-
 import type { FileNode } from "./types";
 
 /*****************************************************
@@ -20,6 +18,16 @@ if (!codeEditorEl || !outputEl || !runCodeButtonEl || !testCodeButtonEl) {
   throw new Error("Missing required HTML elements");
 }
 
+let metaJSON;
+try {
+  metaJSON = JSON.parse(
+    document.getElementById("meta-json")?.textContent || "",
+  );
+} catch (error) {
+  throw new Error("Failed to parse challenge metadata");
+}
+
+const files = metaJSON["file_system"];
 /*****************************************************
  * Init codemirror editor
  ****************************************************/

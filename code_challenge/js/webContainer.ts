@@ -73,7 +73,6 @@ export class CodeContainer {
   async runTest() {
     try {
       let source = await this.container.fs.readFile("source.js", "utf-8");
-      // source = `console.log = function () {}; ${addExports(source, ["addTwo", "map"])}`;
       source = `${addExports(source, ["addTwo", "map"])}`;
       await this.container.fs.writeFile("source.js", source);
     } catch (error) {

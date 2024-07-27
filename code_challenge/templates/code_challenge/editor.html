@@ -1,7 +1,7 @@
 {% extends "code_challenge/base.html" %}
 {% load static %}
 {% block editor %}
-  {{ challenge.starter_code|json_script:"starterCode" }}
+  {{ challenge|json_script:"meta-json" }}
   <script src="{% static 'js/editor.js' %}" defer></script>
   <div class="relative h-full w-full">
     <div id="code-editor" class="absolute h-full w-full"></div>
@@ -20,7 +20,6 @@
 {% block instructions %}
   <div class="w-full">
     <div class="uk-card uk-card-body uk-height-1-1 overflow-auto">
-      <h1 class="uk-card-title uk-h1">Challenge: {{ challenge.title }}</h1>
       <article class="prose uk-margin">{{ challenge.instructions |safe }}</article>
     </div>
   </div>
