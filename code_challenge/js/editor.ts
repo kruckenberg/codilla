@@ -11,13 +11,17 @@ import type { FileNode } from "./types";
  ****************************************************/
 const codeEditorEl = document.getElementById("code-editor");
 const outputEl = document.getElementById("output");
+const resetCodeButtonEl = document.getElementById("reset-code-button");
 const runCodeButtonEl = document.getElementById("run-code-button");
 const saveCodeButtonEl = document.getElementById("save-code-button");
 const testCodeButtonEl = document.getElementById("test-code-button");
+const csrfToken =
+  document.getElementById("csrf-token")?.getAttribute("data-csrf-token") || "";
 
 if (
   !codeEditorEl ||
   !outputEl ||
+  !resetCodeButtonEl ||
   !runCodeButtonEl ||
   !saveCodeButtonEl ||
   !testCodeButtonEl
@@ -91,26 +95,32 @@ const container = new CodeContainer({ files, logger: logToOutput });
 container.init();
 
 /*****************************************************
- * Action buttons
+ * Actions
  ****************************************************/
-runCodeButtonEl.addEventListener("click", async () => {
-  clearOutput();
-  await container.writeSource(editorView.state.doc.toString());
-  container.runCode();
-});
-
-saveCodeButtonEl.addEventListener("click", async () => {
+async function saveCode() {
   const code = editorView.state.doc.toString();
   await container.writeSource(code);
   fetch("/api/challenge/save", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      "X-CSRFToken": testCodeButtonEl.getAttribute("data-csrf-token") || "",
+      "X-CSRFToken": csrfToken,
     },
     body: JSON.stringify({ lesson_id, code }),
   });
+}
+
+/*****************************************************
+ * Action buttons
+ ****************************************************/
+runCodeButtonEl.addEventListener("click", async () => {
+  saveCode();
+  clearOutput();
+  await container.writeSource(editorView.state.doc.toString());
+  container.runCode();
 });
+
+saveCodeButtonEl.addEventListener("click", saveCode);
 
 testCodeButtonEl.addEventListener("click", async () => {
   await container.writeSource(editorView.state.doc.toString());
@@ -118,11 +128,31 @@ testCodeButtonEl.addEventListener("click", async () => {
     clearOutput();
     container.runTest();
   }
+  saveCode();
   fetch("/api/challenge/complete", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      "X-CSRFToken": testCodeButtonEl.getAttribute("data-csrf-token") || "",
+      "X-CSRFToken": csrfToken,
+    },
+    body: JSON.stringify({ lesson_id }),
+  });
+});
+
+resetCodeButtonEl.addEventListener("click", async () => {
+  const code = metaJSON["starter_code"];
+  editorView.setState(
+    EditorState.create({
+      doc: code,
+      extensions: [basicSetup, dracula, extendTheme, javascript()],
+    }),
+  );
+  await container.writeSource(code);
+  fetch("/api/challenge/reset", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken,
     },
     body: JSON.stringify({ lesson_id }),
   });

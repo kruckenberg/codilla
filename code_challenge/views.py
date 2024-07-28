@@ -75,6 +75,7 @@ def render_editor(request, lesson, challenge):
             "lesson_id": lesson.link,
             "completed": challenge.completed,
             "file_system": lesson.create_file_system(challenge.code or None),
+            "starter_code": lesson.source_file,
             "instructions": markdown.markdown(
                 lesson.instructions_file, extensions=["fenced_code", "codehilite"]
             ),

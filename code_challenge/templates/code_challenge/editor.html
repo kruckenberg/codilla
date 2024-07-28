@@ -3,14 +3,14 @@
 {% block editor %}
   {{ challenge|json_script:"meta-json" }}
   <script src="{% static 'js/editor.js' %}" defer></script>
+  <div id="csrf-token" data-csrf-token="{{ csrf_token }}"></div>
   <div class="relative h-full w-full">
     <div id="code-editor" class="absolute h-full w-full"></div>
     <div class="absolute inset-x-0 bottom-0 flex flex-row justify-end w-full">
       <button id="run-code-button" class="uk-button uk-button-primary m-1">Run</button>
       <button id="test-code-button"
               class="uk-button uk-button-primary m-1"
-              {% if not user.is_authenticated %}disabled{% endif %}
-              data-csrf-token="{{ csrf_token }}">
+              {% if not user.is_authenticated %}disabled{% endif %}>
         {% if challenge.tests %}
           Test
         {% else %}

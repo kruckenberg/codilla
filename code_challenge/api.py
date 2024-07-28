@@ -52,4 +52,20 @@ def save_code(request):
 
 
 def reset_code(request):
-    pass
+    if not request.user.is_authenticated:
+        pass
+
+    try:
+        course_slug, unit_slug, lesson_slug = split_lesson_id(request)
+        Challenge.objects.update_or_create(
+            user=request.user,
+            course_slug=course_slug,
+            unit_slug=unit_slug,
+            lesson_slug=lesson_slug,
+            defaults={"code": None, "completed": False},
+        )
+
+    except json.JSONDecodeError:
+        print("error: ", request.body)
+
+    return JsonResponse({"message": "OK"})

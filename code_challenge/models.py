@@ -11,7 +11,7 @@ class Challenge(models.Model):
     course_slug = models.CharField(max_length=250)
     unit_slug = models.CharField(max_length=250)
     lesson_slug = models.CharField(max_length=250)
-    code = models.TextField()
+    code = models.TextField(null=True, blank=True)
     completed = models.BooleanField(default=False)  # type: ignore
     last_attempt = models.DateTimeField(default=timezone.now)
 
