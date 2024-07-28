@@ -10,3 +10,42 @@
 .terminal {
   padding: 1rem;
 }
+
+.scrollable-div::-webkit-scrollbar-button {
+  display: none;
+}
+
+.visible-scrollbar,
+.invisible-scrollbar,
+.custom-scrollbar {
+  display: block;
+  /*width: 10em;*/
+  overflow: auto;
+  /*height: 2em;*/
+  /*padding: 1em;*/
+  /*margin: 1em auto;*/
+  /*outline: 2px dashed cornflowerblue;*/
+}
+
+.invisible-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Demonstrate a "mostly customized" scrollbar
+ * (won't be visible otherwise if width/height is specified) */
+.custom-scrollbar::-webkit-scrollbar {
+  background-color: transparent;
+  width: 10px;
+  /*height: 8px;*/
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 10px 10px transparent;
+  border: solid 3px tranparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  box-shadow: inset 0 0 10px 10px #888888;
+  border: 3px solid transparent;
+  border-radius: 5px;
+}

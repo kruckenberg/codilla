@@ -2,7 +2,12 @@ import autoprefixer from "autoprefixer";
 import presetQuick from "franken-ui/shadcn-ui/preset-quick";
 
 export default {
-  content: ["**/templates/**/*.html", "**/forms.py", "**/js/*.{js,ts}"],
+  content: [
+    "**/templates/**/*.html",
+    "**/forms.py",
+    "**/js/*.{js,ts}",
+    "*.css",
+  ],
   theme: {
     extend: {
       typography: {
