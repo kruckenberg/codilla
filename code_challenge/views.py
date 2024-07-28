@@ -1,3 +1,4 @@
+from itertools import groupby
 import markdown
 from django.http import Http404, HttpResponseServerError, JsonResponse
 from django.shortcuts import redirect, render
@@ -28,12 +29,25 @@ def units_index(request, course_slug=""):
     )
     course = get_course(course_slug)
 
+    completed_by_unit = {
+        key: [challenge.lesson_id for challenge in list(group)]
+        for key, group in groupby(completed_lessons, lambda x: x.unit_slug)
+    }
+    lessons_by_unit = [
+        [
+            unit,
+            [lesson for lesson in unit.get_lessons()],
+            completed_by_unit.get(unit.slug),
+        ]
+        for unit in course.get_units()
+    ]
+
     return render(
         request,
         "code_challenge/units.html",
         context={
             "course": course,
-            "completed_lessons": [lesson.lesson_id for lesson in completed_lessons],
+            "lessons_by_unit": lessons_by_unit,
         },
     )
 
