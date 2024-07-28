@@ -9,6 +9,10 @@ export default {
     "*.css",
   ],
   theme: {
+    fontFamily: {
+      sans: ['"Fira Sans"'],
+      mono: ['"Fira Code"'],
+    },
     extend: {
       typography: {
         DEFAULT: {

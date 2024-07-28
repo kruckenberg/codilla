@@ -1,5 +1,6 @@
 @import "@xterm/xterm/css/xterm.css";
 @import "./code_highlight.css";
+@import "./font.css";
 @import "../../code_challenge/css/styles.css";
 
 @tailwind base;
