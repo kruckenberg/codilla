@@ -38,3 +38,7 @@ class Challenge(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.course_slug}/{self.unit_slug}/{self.lesson_slug}"
+
+    @property
+    def lesson_id(self):
+        return f"{self.course_slug}/{self.unit_slug}/{self.lesson_slug}"

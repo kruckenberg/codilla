@@ -1,6 +1,6 @@
 import markdown
 from django.http import Http404, HttpResponseServerError, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from .models import Challenge
 from .importer.build_courses import courses
 
@@ -23,22 +23,23 @@ def courses_index(request):
 
 
 def units_index(request, course_slug=""):
+    completed_lessons = Challenge.objects.filter(
+        user=request.user, course_slug=course_slug, completed=True
+    )
     course = get_course(course_slug)
+
     return render(
         request,
         "code_challenge/units.html",
-        context={"course": course},
+        context={
+            "course": course,
+            "completed_lessons": [lesson.lesson_id for lesson in completed_lessons],
+        },
     )
 
 
-def lessons_index(request, course_slug="", unit_slug=""):
-    course = get_course(course_slug)
-    unit = course.get_unit(unit_slug)
-
-    if not unit:
-        raise Http404()
-
-    return render(request, "code_challenge/lessons.html", context={"unit": unit})
+def units_redirect(request, course_slug="", unit_slug=""):
+    return redirect("units", course_slug=course_slug)
 
 
 def lesson(request, course_slug="", unit_slug="", lesson_slug=""):

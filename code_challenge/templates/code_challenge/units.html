@@ -11,9 +11,16 @@
             <ul>
               {% for lesson in unit.get_lessons %}
                 <li>
-                  <a href={{ lesson.link }}>
-                    {{ lesson.title }}
-                  </a>
+                  <div class="flex place-items-center">
+                    {% if lesson.id in completed_lessons %}
+                      <span class="uk-padding-small text-green-500" uk-icon="icon: check"></span>
+                    {% else %}
+                      <span class="uk-padding-small" uk-icon="icon: minus-circle"></span>
+                    {% endif %}
+                    <a href={{ lesson.link }}>
+                      {{ lesson.title }}
+                    </a>
+                  </div>
                 </li>
               {% endfor %}
             </ul>

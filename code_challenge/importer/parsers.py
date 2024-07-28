@@ -21,6 +21,7 @@ class Lesson:
         self.version = self._metadata.get("version")
         self.tests = self._metadata.get("tests")
         self.link = f"{parent.link}/{self.slug}"
+        self.id = self.link[1:]
 
         self.source_file = self.read_file(os.path.join(directory, "source.js"))
         self.test_file = self.read_file(os.path.join(directory, "test.js"))
