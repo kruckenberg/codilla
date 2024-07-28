@@ -27,7 +27,6 @@ class Lesson:
         self.instructions_file = self.read_file(
             os.path.join(directory, "instructions.md")
         )
-        self.file_system = self.create_file_system()
 
     def read_file(self, filename):
         try:
@@ -36,7 +35,7 @@ class Lesson:
         except FileNotFoundError:
             return ""
 
-    def create_file_system(self):
+    def create_file_system(self, saved_code=None):
         mochaConfig = json.dumps(
             {"reporter": "json", "reporterOptions": ["output=./test-results.json"]}
         )
@@ -58,7 +57,7 @@ class Lesson:
         return {
             "source.js": {
                 "file": {
-                    "contents": self.source_file,
+                    "contents": saved_code or self.source_file,
                 },
             },
             "package.json": {

@@ -1,6 +1,7 @@
-from django.http import Http404, HttpResponseServerError
-from django.shortcuts import render
 import markdown
+from django.http import Http404, HttpResponseServerError, JsonResponse
+from django.shortcuts import render
+from .models import Challenge
 from .importer.build_courses import courses
 
 
@@ -11,19 +12,6 @@ def get_course(course_slug):
         raise Http404()
 
     return course
-
-
-def get_serializable_user(request):
-    if request.user.is_authenticated:
-        user = {
-            "id": request.user.id,
-            "username": request.user.username,
-            "first_name": request.user.first_name,
-            "last_name": request.user.last_name,
-        }
-    else:
-        user = {"id": 0, "username": "", "first_name": "", "last_name": ""}
-    return user
 
 
 def courses_index(request):
@@ -60,39 +48,52 @@ def lesson(request, course_slug="", unit_slug="", lesson_slug=""):
     if not lesson:
         raise Http404()
 
+    if request.user.is_authenticated:
+        challenge, _ = Challenge.objects.get_or_create(
+            user=request.user,
+            course_slug=course_slug,
+            unit_slug=unit_slug,
+            lesson_slug=lesson_slug,
+        )
+    else:
+        challenge = Challenge(completed=False)
+
     if lesson.type == "editor":
-        return render_editor(request, lesson)
+        return render_editor(request, lesson, challenge)
     if lesson.type == "repl":
-        return render_terminal(request, lesson)
+        return render_terminal(request, lesson, challenge)
 
     return HttpResponseServerError(
         b"Oops. Something went wrong. Reloading the page is unlikely to help."
     )
 
 
-def render_editor(request, lesson):
+def render_editor(request, lesson, challenge):
     context = {
         "challenge": {
             "title": lesson.title,
-            "file_system": lesson.file_system,
+            "lesson_id": lesson.link,
+            "completed": challenge.completed,
+            "file_system": lesson.create_file_system(challenge.code or None),
             "instructions": markdown.markdown(
                 lesson.instructions_file, extensions=["fenced_code", "codehilite"]
             ),
-            "user": get_serializable_user(request),
         }
     }
 
     return render(request, "code_challenge/editor.html", context=context)
 
 
-def render_terminal(request, lesson):
+def render_terminal(request, lesson, challenge):
     context = {
         "challenge": {
             "title": lesson.title,
+            "lesson_id": lesson.link,
+            "completed": challenge.completed,
             "instructions": markdown.markdown(
                 lesson.instructions_file, extensions=["fenced_code", "codehilite"]
             ),
-            "user": get_serializable_user(request),
+            "has_tests": lesson.tests,
         }
     }
 

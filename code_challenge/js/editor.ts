@@ -12,9 +12,16 @@ import type { FileNode } from "./types";
 const codeEditorEl = document.getElementById("code-editor");
 const outputEl = document.getElementById("output");
 const runCodeButtonEl = document.getElementById("run-code-button");
+const saveCodeButtonEl = document.getElementById("save-code-button");
 const testCodeButtonEl = document.getElementById("test-code-button");
 
-if (!codeEditorEl || !outputEl || !runCodeButtonEl || !testCodeButtonEl) {
+if (
+  !codeEditorEl ||
+  !outputEl ||
+  !runCodeButtonEl ||
+  !saveCodeButtonEl ||
+  !testCodeButtonEl
+) {
   throw new Error("Missing required HTML elements");
 }
 
@@ -23,11 +30,15 @@ try {
   metaJSON = JSON.parse(
     document.getElementById("meta-json")?.textContent || "",
   );
+  console.log({ metaJSON });
 } catch (error) {
   throw new Error("Failed to parse challenge metadata");
 }
 
 const files = metaJSON["file_system"];
+const hasTests = metaJSON["has_tests"];
+const lesson_id = metaJSON["lesson_id"];
+
 /*****************************************************
  * Init codemirror editor
  ****************************************************/
@@ -88,8 +99,31 @@ runCodeButtonEl.addEventListener("click", async () => {
   container.runCode();
 });
 
+saveCodeButtonEl.addEventListener("click", async () => {
+  const code = editorView.state.doc.toString();
+  await container.writeSource(code);
+  fetch("/api/challenge/save", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": testCodeButtonEl.getAttribute("data-csrf-token") || "",
+    },
+    body: JSON.stringify({ lesson_id, code }),
+  });
+});
+
 testCodeButtonEl.addEventListener("click", async () => {
-  clearOutput();
   await container.writeSource(editorView.state.doc.toString());
-  container.runTest();
+  if (hasTests) {
+    clearOutput();
+    container.runTest();
+  }
+  fetch("/api/challenge/complete", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": testCodeButtonEl.getAttribute("data-csrf-token") || "",
+    },
+    body: JSON.stringify({ lesson_id }),
+  });
 });
