@@ -34,7 +34,6 @@ try {
   metaJSON = JSON.parse(
     document.getElementById("meta-json")?.textContent || "",
   );
-  console.log({ metaJSON });
 } catch (error) {
   throw new Error("Failed to parse challenge metadata");
 }

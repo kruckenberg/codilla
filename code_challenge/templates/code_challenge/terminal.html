@@ -1,7 +1,9 @@
 {% extends "code_challenge/base.html" %}
 {% load static %}
 {% block editor %}
+  {{ challenge|json_script:"meta-json" }}
   <script src="{% static 'js/terminal.js' %}" defer></script>
+  <div id="csrf-token" data-csrf-token="{{ csrf_token }}"></div>
   <div class="relative h-full w-full">
     <div id="terminal" class="absolute h-full w-full terminal"></div>
     <div class="absolute -inset-x-10 bottom-0 flex flex-row justify-end w-full">

@@ -9,10 +9,23 @@ import type { WebContainerProcess } from "./types";
 const terminalEl = document.getElementById("terminal");
 const completeButtonEl = document.getElementById("complete-button");
 const clearButtonEl = document.getElementById("clear-button");
+const csrfToken =
+  document.getElementById("csrf-token")?.getAttribute("data-csrf-token") || "";
 
 if (!terminalEl || !completeButtonEl || !clearButtonEl) {
   throw new Error("Missing required HTML elements");
 }
+
+let metaJSON;
+try {
+  metaJSON = JSON.parse(
+    document.getElementById("meta-json")?.textContent || "",
+  );
+} catch (error) {
+  throw new Error("Failed to parse challenge metadata");
+}
+
+const lesson_id = metaJSON["lesson_id"];
 
 /*****************************************************
  * Create shell and launch Node REPL
@@ -61,6 +74,17 @@ clearButtonEl.addEventListener("click", () => {
   setTimeout(() => {
     terminal.focus();
   }, 0);
+});
+
+completeButtonEl.addEventListener("click", () => {
+  fetch("/api/challenge/complete", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken,
+    },
+    body: JSON.stringify({ lesson_id }),
+  });
 });
 
 startTerminal();

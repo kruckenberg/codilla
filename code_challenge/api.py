@@ -6,7 +6,7 @@ from .models import Challenge
 
 
 def split_lesson_id(request):
-    lesson_id = json.loads(request.body)["lesson_id"][1:]
+    lesson_id = json.loads(request.body)["lesson_id"]
     return lesson_id.split("/")
 
 
