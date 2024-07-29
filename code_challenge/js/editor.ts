@@ -122,19 +122,19 @@ runCodeButtonEl.addEventListener("click", async () => {
 saveCodeButtonEl.addEventListener("click", saveCode);
 
 testCodeButtonEl.addEventListener("click", async () => {
-  await container.writeSource(editorView.state.doc.toString());
+  const code = editorView.state.doc.toString();
+  await container.writeSource(code);
   if (hasTests) {
     clearOutput();
     container.runTest();
   }
-  saveCode();
   fetch("/api/challenge/complete", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       "X-CSRFToken": csrfToken,
     },
-    body: JSON.stringify({ lesson_id }),
+    body: JSON.stringify({ lesson_id, code }),
   });
 });
 

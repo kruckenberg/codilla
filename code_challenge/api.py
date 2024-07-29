@@ -12,20 +12,21 @@ def split_lesson_id(request):
 
 def mark_complete(request):
     if not request.user.is_authenticated:
-        pass
+        return JsonResponse({"message": "OK"})
 
     try:
         course_slug, unit_slug, lesson_slug = split_lesson_id(request)
+        code = json.loads(request.body)["code"] or None
         Challenge.objects.update_or_create(
             user=request.user,
             course_slug=course_slug,
             unit_slug=unit_slug,
             lesson_slug=lesson_slug,
-            defaults={"completed": True},
+            defaults={"completed": True, "code": code},
         )
 
     except json.JSONDecodeError:
-        print("error: ", request.body)
+        return JsonResponse({"message": "Error"}, status=500)
 
     return JsonResponse({"message": "OK"})
 
