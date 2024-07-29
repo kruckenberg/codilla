@@ -23,7 +23,7 @@ def courses_index(request):
     )
 
 
-def units_index(request, course_slug=""):
+def course_view(request, course_slug=""):
     completed_lessons = Challenge.objects.filter(
         user=request.user, course_slug=course_slug, completed=True
     )
@@ -44,7 +44,7 @@ def units_index(request, course_slug=""):
 
     return render(
         request,
-        "code_challenge/units.html",
+        "code_challenge/course_view.html",
         context={
             "course": course,
             "lessons_by_unit": lessons_by_unit,
