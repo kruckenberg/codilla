@@ -16,7 +16,7 @@ def mark_complete(request):
 
     try:
         course_slug, unit_slug, lesson_slug = split_lesson_id(request)
-        code = json.loads(request.body)["code"] or None
+        code = json.loads(request.body).get("code")
         Challenge.objects.update_or_create(
             user=request.user,
             course_slug=course_slug,
@@ -37,7 +37,7 @@ def save_code(request):
 
     try:
         course_slug, unit_slug, lesson_slug = split_lesson_id(request)
-        code = json.loads(request.body)["code"]
+        code = json.loads(request.body).get("code")
         Challenge.objects.update_or_create(
             user=request.user,
             course_slug=course_slug,
@@ -47,7 +47,7 @@ def save_code(request):
         )
 
     except json.JSONDecodeError:
-        print("error: ", request.body)
+        return JsonResponse({"message": "Error"}, status=500)
 
     return JsonResponse({"message": "OK"})
 
