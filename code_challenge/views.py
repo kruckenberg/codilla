@@ -24,23 +24,35 @@ def courses_index(request):
 
 
 def course_view(request, course_slug=""):
-    completed_lessons = Challenge.objects.filter(
-        user=request.user, course_slug=course_slug, completed=True
-    )
     course = get_course(course_slug)
 
-    completed_by_unit = {
-        key: [challenge.lesson_id for challenge in list(group)]
-        for key, group in groupby(completed_lessons, lambda x: x.unit_slug)
-    }
-    lessons_by_unit = [
-        [
-            unit,
-            [lesson for lesson in unit.get_lessons()],
-            completed_by_unit.get(unit.slug),
+    if request.user.is_authenticated:
+        completed_lessons = Challenge.objects.filter(
+            user=request.user, course_slug=course_slug, completed=True
+        )
+
+        completed_by_unit = {
+            key: [challenge.lesson_id for challenge in list(group)]
+            for key, group in groupby(completed_lessons, lambda x: x.unit_slug)
+        }
+
+        lessons_by_unit = [
+            [
+                unit,
+                [lesson for lesson in unit.get_lessons()],
+                completed_by_unit.get(unit.slug),
+            ]
+            for unit in course.get_units()
         ]
-        for unit in course.get_units()
-    ]
+    else:
+        lessons_by_unit = [
+            [
+                unit,
+                [lesson for lesson in unit.get_lessons()],
+                [],  # If not authenticated, no lessons completed
+            ]
+            for unit in course.get_units()
+        ]
 
     return render(
         request,
