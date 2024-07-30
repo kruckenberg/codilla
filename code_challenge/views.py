@@ -64,8 +64,8 @@ def course_view(request, course_slug=""):
     )
 
 
-def units_redirect(request, course_slug="", unit_slug=""):
-    return redirect("units", course_slug=course_slug)
+def units_redirect(request, course_slug, unit_slug):
+    return redirect("course_view", course_slug=course_slug)
 
 
 def lesson(request, course_slug="", unit_slug="", lesson_slug=""):
