@@ -1,7 +1,5 @@
 import json
 from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
 from .models import Challenge
 
 
@@ -33,7 +31,7 @@ def mark_complete(request):
 
 def save_code(request):
     if not request.user.is_authenticated:
-        pass
+        return JsonResponse({"message": "OK"})
 
     try:
         course_slug, unit_slug, lesson_slug = split_lesson_id(request)
@@ -54,7 +52,7 @@ def save_code(request):
 
 def reset_code(request):
     if not request.user.is_authenticated:
-        pass
+        return JsonResponse({"message": "OK"})
 
     try:
         course_slug, unit_slug, lesson_slug = split_lesson_id(request)
