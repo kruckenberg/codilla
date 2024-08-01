@@ -3,35 +3,39 @@
 {% block page-content %}
   <div class="uk-container">
     <h1 class="uk-h1">{{ course.title }}</h1>
-    <div class="flex flex-wrap justify-center">
-      {% for unit, lessons, lessons_completed in lessons_by_unit %}
-        <div class="uk-card uk-card-secondary basis-1/3 uk-card-body uk-margin-left uk-margin-right uk-margin-top uk-margin-bottom flex flex-col justify-between">
-          <div>
-            <h3 class="uk-card-title uk-margin uk-h3">{{ unit.title }}</h3>
-            <ul>
-              {% for lesson in lessons %}
-                <li>
-                  <div class="flex place-items-center">
-                    {% if lesson.id in lessons_completed %}
-                      <span class="uk-padding-small text-green-500" uk-icon="icon: check"></span>
-                    {% else %}
-                      <span class="uk-padding-small" uk-icon="icon: minus-circle"></span>
-                    {% endif %}
-                    <a href={{ lesson.link }}>
-                      {{ lesson.title }}
-                    </a>
-                  </div>
-                </li>
-              {% endfor %}
-            </ul>
-          </div>
-          <div class="uk-margin-xlarge-top">
-            <progress class="uk-progress"
-                      value="{{ lessons_completed|length }}"
-                      max="{{ lessons|length }}"></progress>
-          </div>
-        </div>
-      {% endfor %}
+    <div class="flex flex-col">
+      <ul class="uk-accordion uk-padding" uk-accordion>
+        {% for unit, lessons, lessons_completed in lessons_by_unit %}
+          <li>
+            <a class="uk-accordion-title" href>
+              <div class="w-1/3">
+                <span class="uk-h3">{{ unit.title }}</span>
+                <progress class="uk-progress uk-margin-top"
+                          value="{{ lessons_completed|length }}"
+                          max="{{ lessons|length }}"></progress>
+              </div>
+              <span class="uk-accordion-icon" uk-icon="icon: chevron-down; ratio: 0.8"></span>
+            </a>
+            <div class="uk-accordion-content">
+              <ul>
+                {% for lesson in lessons %}
+                  <li>
+                    <div class="flex place-items-center">
+                      {% if lesson.id in lessons_completed %}
+                        <span class="uk-padding-small text-green-500" uk-icon="icon: check"></span>
+                      {% else %}
+                        <span class="uk-padding-small" uk-icon="icon: minus-circle"></span>
+                      {% endif %}
+                      <a href={{ lesson.link }}>
+                        {{ lesson.title }}
+                      </a>
+                    </div>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
     </div>
-  </div>
-{% endblock page-content %}
+  {% endblock page-content %}
