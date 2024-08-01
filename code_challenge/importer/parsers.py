@@ -83,6 +83,8 @@ class Lesson:
 
 class Unit:
     def __init__(self, directory: str, parent):
+        self.parent = parent
+
         try:
             with open(os.path.join(directory, "meta.json"), "r") as file:
                 self._metadata = file.read()

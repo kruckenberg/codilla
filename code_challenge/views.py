@@ -106,7 +106,10 @@ def render_editor(request, lesson, challenge):
             "instructions": markdown.markdown(
                 lesson.instructions_file, extensions=["fenced_code", "codehilite"]
             ),
-            "parent": {"link": lesson.parent.link, "title": lesson.parent.title},
+            "parent": {
+                "link": lesson.parent.parent.link,
+                "title": lesson.parent.parent.title,
+            },
             "next_lesson": {"link": lesson.next.link, "title": lesson.next.title},
             "previous_lesson": {
                 "link": lesson.previous.link,
@@ -129,6 +132,10 @@ def render_terminal(request, lesson, challenge):
                 lesson.instructions_file, extensions=["fenced_code", "codehilite"]
             ),
             "has_tests": lesson.tests,
+            "parent": {
+                "link": lesson.parent.parent.link,
+                "title": lesson.parent.parent.title,
+            },
             "next_lesson": {"link": lesson.next.link, "title": lesson.next.title},
             "previous_lesson": {
                 "link": lesson.previous.link,

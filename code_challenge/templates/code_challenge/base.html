@@ -15,8 +15,8 @@
              uk-icon="icon: home"
              uk-tooltip="{{ challenge.parent.title }}"></a>
           <div>
-            <a href="{{ challenge.previous_lesson.link }}" uk-icon="icon: chevron-double-left" uk-tooltip={{ challenge.previous_lesson.title }}></a>
-            <a href="{{ challenge.next_lesson.link }}" uk-icon="icon: chevron-double-right" uk-tooltip={{ challenge.next_lesson.title }}></a>
+            <a href="{{ challenge.previous_lesson.link }}" uk-icon="icon: chevron-double-left" uk-tooltip="{{ challenge.previous_lesson.title }}"></a>
+            <a href="{{ challenge.next_lesson.link }}" uk-icon="icon: chevron-double-right" uk-tooltip="{{ challenge.next_lesson.title }}"></a>
           </div>
           {% if challenge.completed %}
             <span class="text-green-500"
