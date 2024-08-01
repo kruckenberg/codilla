@@ -25,7 +25,9 @@ try {
   throw new Error("Failed to parse challenge metadata");
 }
 
-const lesson_id = metaJSON["lesson_id"];
+const lesson_id = metaJSON.lesson_id;
+const user_authenticated = metaJSON?.user?.authenticated || false;
+const next_lesson_link = metaJSON?.next_lesson?.link || "";
 
 /*****************************************************
  * Create shell and launch Node REPL
@@ -76,15 +78,24 @@ clearButtonEl.addEventListener("click", () => {
   }, 0);
 });
 
-completeButtonEl.addEventListener("click", () => {
-  fetch("/api/challenge/complete", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": csrfToken,
-    },
-    body: JSON.stringify({ lesson_id }),
-  });
+completeButtonEl.addEventListener("click", async () => {
+  if (user_authenticated) {
+    const response = await fetch("/api/challenge/complete", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrfToken,
+      },
+      body: JSON.stringify({ lesson_id }),
+    });
+
+    if (response.status === 200) {
+      window.location.assign(next_lesson_link);
+    }
+    // TODO: handle error response
+  } else {
+    window.location.assign(next_lesson_link);
+  }
 });
 
 startTerminal();

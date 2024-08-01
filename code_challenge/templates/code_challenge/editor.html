@@ -8,9 +8,7 @@
     <div id="code-editor" class="absolute h-full w-full"></div>
     <div class="absolute inset-x-0 bottom-0 flex flex-row justify-end w-full">
       <button id="run-code-button" class="uk-button uk-button-primary m-1">Run</button>
-      <button id="test-code-button"
-              class="uk-button uk-button-primary m-1"
-              {% if not user.is_authenticated %}disabled{% endif %}>
+      <button id="test-code-button" class="uk-button uk-button-primary m-1">
         {% if challenge.tests %}
           Test
         {% else %}
@@ -19,7 +17,9 @@
       </button>
       <button id="save-code-button"
               class="uk-button uk-button-default m-1"
-              {% if not user.is_authenticated %}disabled{% endif %}>Save</button>
+              {% if not user.is_authenticated %}disabled uk-tooltip="title: Login to save your code; pos: top"{% endif %}>
+        Save
+      </button>
       <button id="reset-code-button" class="uk-button uk-button-default m-1">Reset</button>
     </div>
   </div>
@@ -30,7 +30,7 @@
 {% endblock output %}
 <!-- Instructions -->
 {% block instructions %}
-  <div class="w-full">
+  <div class="w-full instruct overflow-hidden">
     <div class="uk-card uk-card-body uk-height-1-1 custom-scrollbar overflow-y-auto">
       <article class="prose uk-margin">{{ challenge.instructions |safe }}</article>
     </div>

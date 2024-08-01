@@ -3,8 +3,10 @@ import json
 
 
 class Lesson:
-    def __init__(self, directory: str, parent):
+    def __init__(self, directory: str, parent, previous_lesson=None):
         self.parent = parent
+        self.previous = previous_lesson
+        self.next = None
 
         try:
             with open(os.path.join(directory, "meta.json"), "r") as file:
@@ -96,6 +98,9 @@ class Unit:
         self._lessons = []
 
     def add_lesson(self, lesson: Lesson):
+        if len(self._lessons) > 0:
+            lesson.previous = self._lessons[-1]
+            self._lessons[-1].next = lesson
         self._lessons.append(lesson)
 
     def get_lesson(self, slug: str):

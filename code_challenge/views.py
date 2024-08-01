@@ -106,7 +106,14 @@ def render_editor(request, lesson, challenge):
             "instructions": markdown.markdown(
                 lesson.instructions_file, extensions=["fenced_code", "codehilite"]
             ),
-        }
+            "parent": {"link": lesson.parent.link, "title": lesson.parent.title},
+            "next_lesson": {"link": lesson.next.link, "title": lesson.next.title},
+            "previous_lesson": {
+                "link": lesson.previous.link,
+                "title": lesson.previous.title,
+            },
+            "user": {"authenticated": request.user.is_authenticated},
+        },
     }
 
     return render(request, "code_challenge/editor.html", context=context)
@@ -122,7 +129,13 @@ def render_terminal(request, lesson, challenge):
                 lesson.instructions_file, extensions=["fenced_code", "codehilite"]
             ),
             "has_tests": lesson.tests,
-        }
+            "next_lesson": {"link": lesson.next.link, "title": lesson.next.title},
+            "previous_lesson": {
+                "link": lesson.previous.link,
+                "title": lesson.previous.title,
+            },
+            "user": {"authenticated": request.user.is_authenticated},
+        },
     }
 
     return render(request, "code_challenge/terminal.html", context=context)
