@@ -96,6 +96,9 @@ def lesson(request, course_slug="", unit_slug="", lesson_slug=""):
 
 
 def render_editor(request, lesson, challenge):
+    course_link = lesson.parent.parent.link
+    course_title = lesson.parent.parent.title
+
     context = {
         "challenge": {
             "title": lesson.title,
@@ -107,13 +110,16 @@ def render_editor(request, lesson, challenge):
                 lesson.instructions_file, extensions=["fenced_code", "codehilite"]
             ),
             "parent": {
-                "link": lesson.parent.parent.link,
-                "title": lesson.parent.parent.title,
+                "link": course_link,
+                "title": course_title,
             },
-            "next_lesson": {"link": lesson.next.link, "title": lesson.next.title},
+            "next_lesson": {
+                "link": lesson.next.link if lesson.next else course_link,
+                "title": lesson.next.title if lesson.next else course_title,
+            },
             "previous_lesson": {
-                "link": lesson.previous.link,
-                "title": lesson.previous.title,
+                "link": lesson.previous.link if lesson.previous else course_link,
+                "title": lesson.previous.title if lesson.previous else course_title,
             },
             "user": {"authenticated": request.user.is_authenticated},
         },
@@ -123,6 +129,9 @@ def render_editor(request, lesson, challenge):
 
 
 def render_terminal(request, lesson, challenge):
+    course_link = lesson.parent.parent.link
+    course_title = lesson.parent.parent.title
+
     context = {
         "challenge": {
             "title": lesson.title,
@@ -133,13 +142,16 @@ def render_terminal(request, lesson, challenge):
             ),
             "has_tests": lesson.tests,
             "parent": {
-                "link": lesson.parent.parent.link,
-                "title": lesson.parent.parent.title,
+                "link": course_link,
+                "title": course_title,
             },
-            "next_lesson": {"link": lesson.next.link, "title": lesson.next.title},
+            "next_lesson": {
+                "link": lesson.next.link if lesson.next else course_link,
+                "title": lesson.next.title if lesson.next else course_title,
+            },
             "previous_lesson": {
-                "link": lesson.previous.link,
-                "title": lesson.previous.title,
+                "link": lesson.previous.link if lesson.previous else course_link,
+                "title": lesson.previous.title if lesson.previous else course_title,
             },
             "user": {"authenticated": request.user.is_authenticated},
         },

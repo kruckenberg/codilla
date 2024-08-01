@@ -3,9 +3,9 @@ import json
 
 
 class Lesson:
-    def __init__(self, directory: str, parent, previous_lesson=None):
+    def __init__(self, directory: str, parent):
         self.parent = parent
-        self.previous = previous_lesson
+        self.previous = None
         self.next = None
 
         try:
@@ -84,6 +84,8 @@ class Lesson:
 class Unit:
     def __init__(self, directory: str, parent):
         self.parent = parent
+        self.previous = None
+        self.next = None
 
         try:
             with open(os.path.join(directory, "meta.json"), "r") as file:
@@ -136,6 +138,9 @@ class Course:
         self._units = []
 
     def add_unit(self, unit):
+        if len(self._units) > 0:
+            unit.previous = self._units[-1]
+            self._units[-1].next = unit
         self._units.append(unit)
 
     def get_lesson(self, unit_slug: str, lesson_slug: str):
