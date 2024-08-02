@@ -22,6 +22,7 @@ class Lesson:
         self.type = self._metadata.get("type")
         self.version = self._metadata.get("version")
         self.tests = self._metadata.get("tests")
+        self.exports = self._metadata.get("exports")
         self.link = f"{parent.link}/{self.slug}"
         self.id = self.link[1:]
 

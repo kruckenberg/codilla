@@ -5,8 +5,8 @@ import { simple } from "acorn-walk";
  * Verifies that the source code contains the expected functions and
  * adds an export statement to make them available for tests.
  */
-export function addExports(source: string, fnNames: string[]): string {
-  const fnsInSource: string[] = [];
+export function addExports(source: string, exportNames: string[]): string {
+  const assignments: string[] = [];
 
   const ast = parse(source, {
     ecmaVersion: "latest",
@@ -15,18 +15,21 @@ export function addExports(source: string, fnNames: string[]): string {
 
   simple(ast, {
     FunctionDeclaration(node) {
-      fnsInSource.push(node?.id?.name || "anonymous");
+      assignments.push(node?.id?.name || "anonymous");
     },
     ArrowFunctionExpression(node) {
-      fnsInSource.push(node?.id?.name || "anonymous");
+      assignments.push(node?.id?.name || "anonymous");
+    },
+    VariableDeclaration(node) {
+      assignments.push(...node?.declarations.map((d) => d.id.name));
     },
   });
 
-  for (const fnName of fnNames) {
-    if (!fnsInSource.includes(fnName)) {
-      throw new Error(`Expected a function named ${fnName}`);
+  for (const exportName of exportNames) {
+    if (!assignments.includes(exportName)) {
+      throw new Error(`Expected an assignment named ${exportName}`);
     }
   }
 
-  return `${source} export { ${fnNames.join(", ")} };`;
+  return `${source} export { ${exportNames.join(", ")} };`;
 }

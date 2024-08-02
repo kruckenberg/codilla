@@ -104,6 +104,8 @@ def render_editor(request, lesson, challenge):
             "title": lesson.title,
             "lesson_id": lesson.id,
             "completed": challenge.completed,
+            "has_tests": lesson.tests,
+            "exports": lesson.exports,
             "file_system": lesson.create_file_system(challenge.code or None),
             "starter_code": lesson.source_file,
             "instructions": markdown.markdown(

@@ -40,6 +40,7 @@ try {
 
 const files = metaJSON.file_system;
 const hasTests = metaJSON.has_tests;
+const exports = metaJSON.exports || [];
 const lesson_id = metaJSON.lesson_id;
 const user_authenticated = metaJSON?.user?.authenticated || false;
 const next_lesson_link = metaJSON?.next_lesson?.link || "";
@@ -128,8 +129,9 @@ testCodeButtonEl.addEventListener("click", async () => {
   await container.writeSource(code);
   if (hasTests) {
     clearOutput();
-    container.runTest();
+    container.runTest(exports);
     // TODO: handle failed tests
+    return;
   }
 
   if (user_authenticated) {

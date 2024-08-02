@@ -70,10 +70,10 @@ export class CodeContainer {
     );
   }
 
-  async runTest() {
+  async runTest(exports: string[] = []) {
     try {
       let source = await this.container.fs.readFile("source.js", "utf-8");
-      source = `${addExports(source, ["addTwo", "map"])}`;
+      source = `${addExports(source, exports)}`;
       await this.container.fs.writeFile("source.js", source);
     } catch (error) {
       this.logger(error?.message || "Something went wrong");
