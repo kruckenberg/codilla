@@ -26,7 +26,7 @@
                       {% else %}
                         <span class="uk-padding-small" uk-icon="icon: minus-circle"></span>
                       {% endif %}
-                      <a href={{ lesson.link }}>
+                      <a href="{% url 'lesson_view' course_slug=lesson.parent.parent.slug unit_slug=lesson.parent.slug lesson_slug=lesson.slug %}">
                         {{ lesson.title }}
                       </a>
                     </div>

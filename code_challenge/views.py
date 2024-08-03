@@ -2,6 +2,7 @@ from itertools import groupby
 import markdown
 from django.http import Http404, HttpResponseServerError, JsonResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from .models import Challenge
 from .importer.build_courses import courses
 
@@ -96,7 +97,6 @@ def lesson(request, course_slug="", unit_slug="", lesson_slug=""):
 
 
 def render_editor(request, lesson, challenge):
-    course_link = lesson.parent.parent.link
     course_title = lesson.parent.parent.title
 
     context = {
@@ -112,15 +112,19 @@ def render_editor(request, lesson, challenge):
                 lesson.instructions_file, extensions=["fenced_code", "codehilite"]
             ),
             "parent": {
-                "link": course_link,
+                "link": reverse("course_view", args=[lesson.parent.parent.slug]),
                 "title": course_title,
             },
             "next_lesson": {
-                "link": lesson.next.link if lesson.next else course_link,
+                "link": reverse("lesson_view", args=lesson.next.id.split("/"))
+                if lesson.next
+                else reverse("course_view", args=[lesson.parent.parent.slug]),
                 "title": lesson.next.title if lesson.next else course_title,
             },
             "previous_lesson": {
-                "link": lesson.previous.link if lesson.previous else course_link,
+                "link": reverse("lesson_view", args=lesson.previous.id.split("/"))
+                if lesson.previous
+                else reverse("course_view", args=[lesson.parent.parent.slug]),
                 "title": lesson.previous.title if lesson.previous else course_title,
             },
             "user": {"authenticated": request.user.is_authenticated},
@@ -131,7 +135,6 @@ def render_editor(request, lesson, challenge):
 
 
 def render_terminal(request, lesson, challenge):
-    course_link = lesson.parent.parent.link
     course_title = lesson.parent.parent.title
 
     context = {
@@ -144,15 +147,19 @@ def render_terminal(request, lesson, challenge):
             ),
             "has_tests": lesson.tests,
             "parent": {
-                "link": course_link,
+                "link": reverse("course_view", args=[lesson.parent.parent.slug]),
                 "title": course_title,
             },
             "next_lesson": {
-                "link": lesson.next.link if lesson.next else course_link,
+                "link": reverse("lesson_view", args=lesson.next.id.split("/"))
+                if lesson.next
+                else reverse("course_view", args=[lesson.parent.parent.slug]),
                 "title": lesson.next.title if lesson.next else course_title,
             },
             "previous_lesson": {
-                "link": lesson.previous.link if lesson.previous else course_link,
+                "link": reverse("lesson_view", args=lesson.previous.id.split("/"))
+                if lesson.previous
+                else reverse("course_view", args=[lesson.parent.parent.slug]),
                 "title": lesson.previous.title if lesson.previous else course_title,
             },
             "user": {"authenticated": request.user.is_authenticated},

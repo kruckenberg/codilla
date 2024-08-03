@@ -16,8 +16,8 @@ def custom_serve(request, path, insecure=False, **kwargs):
 
 
 urlpatterns = [
-    path("codilla/", include("code_challenge.urls")),
     path("admin/", admin.site.urls),
     path("account/", include("account.urls")),
+    path("codilla/", include("code_challenge.urls")),
     *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT, view=custom_serve),
 ]
