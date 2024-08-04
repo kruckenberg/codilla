@@ -1,6 +1,7 @@
 import { parse } from "acorn";
 import { simple } from "acorn-walk";
 import { generate } from "astring";
+import type { Program } from "acorn";
 
 /**
  * Verifies that the source code contains the expected functions and
@@ -32,5 +33,20 @@ export function addExports(source: string, exportNames: string[]): string {
     }
   }
 
-  return `${generate(ast)} export { ${exportNames.join(", ")} };`;
+  return `${lint(ast)} export { ${exportNames.join(", ")} };`;
+}
+
+export function lint(source: string | Program): string {
+  let ast: Program;
+
+  if (typeof source === "string") {
+    ast = parse(source, {
+      ecmaVersion: "latest",
+      sourceType: "module",
+    });
+  } else {
+    ast = source;
+  }
+
+  return generate(ast);
 }

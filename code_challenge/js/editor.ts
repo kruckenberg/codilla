@@ -4,7 +4,7 @@ import { EditorView } from "@codemirror/view";
 import { javascript } from "@codemirror/lang-javascript";
 import { dracula } from "thememirror";
 import { CodeContainer } from "./webContainer";
-import type { FileNode } from "./types";
+import type { FileNode, MetaJSON } from "./types";
 
 /*****************************************************
  * Get HTML elements
@@ -29,7 +29,7 @@ if (
   throw new Error("Missing required HTML elements");
 }
 
-let metaJSON;
+let metaJSON: MetaJSON;
 try {
   metaJSON = JSON.parse(
     document.getElementById("meta-json")?.textContent || "",
@@ -39,11 +39,6 @@ try {
 }
 
 const files = metaJSON.file_system;
-const hasTests = metaJSON.has_tests;
-const exports = metaJSON.exports || [];
-const lesson_id = metaJSON.lesson_id;
-const user_authenticated = metaJSON?.user?.authenticated || false;
-const next_lesson_link = metaJSON?.next_lesson?.link || "";
 
 /*****************************************************
  * Init codemirror editor
@@ -86,96 +81,26 @@ function logToOutput(message: string) {
   });
 }
 
-function clearOutput() {
-  outputView.setState(initialOutputState);
-}
-
 /*****************************************************
  * Container setup
  ****************************************************/
-const container = new CodeContainer({ files, logger: logToOutput });
+const container = new CodeContainer({
+  apiRoot: "/codilla/api/challenge",
+  csrfToken: csrfToken,
+  meta: metaJSON,
+  logger: logToOutput,
+  editor: editorView,
+  output: outputView,
+});
 container.init();
-
-/*****************************************************
- * Actions
- ****************************************************/
-async function saveCode() {
-  const code = editorView.state.doc.toString();
-  fetch("/codilla/api/challenge/save", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": csrfToken,
-    },
-    body: JSON.stringify({ lesson_id, code }),
-  });
-}
 
 /*****************************************************
  * Action buttons
  ****************************************************/
-runCodeButtonEl.addEventListener("click", async () => {
-  const code = editorView.state.doc.toString();
-  await saveCode();
-  clearOutput();
-  await container.writeSource(code, []);
-  container.runCode();
-});
+runCodeButtonEl.addEventListener("click", async () => container.run());
 
-saveCodeButtonEl.addEventListener("click", saveCode);
+saveCodeButtonEl.addEventListener("click", async () => container.save());
 
-testCodeButtonEl.addEventListener("click", async () => {
-  const code = editorView.state.doc.toString();
-  await saveCode();
-  clearOutput();
-  try {
-    await container.writeSource(code, exports);
-  } catch (error) {
-    // bail if the code is invalid
-    return;
-  }
+testCodeButtonEl.addEventListener("click", async () => container.test());
 
-  if (hasTests) {
-    container.runTest();
-    // TODO: handle failed tests
-    return;
-  }
-
-  if (user_authenticated) {
-    const response = await fetch("/codilla/api/challenge/complete", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrfToken,
-      },
-      body: JSON.stringify({ lesson_id, code }),
-    });
-
-    if (response.status === 200) {
-      window.location.assign(next_lesson_link);
-    }
-    // TODO: handle error response
-  } else {
-    window.location.assign(next_lesson_link);
-  }
-});
-
-resetCodeButtonEl.addEventListener("click", async () => {
-  const code = metaJSON["starter_code"];
-  editorView.setState(
-    EditorState.create({
-      doc: code,
-      extensions: [basicSetup, dracula, extendTheme, javascript()],
-    }),
-  );
-  saveCode();
-  await container.writeSource(code, exports);
-  fetch("/codilla/api/challenge/reset", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": csrfToken,
-    },
-    body: JSON.stringify({ lesson_id }),
-  });
-});
+resetCodeButtonEl.addEventListener("click", async () => container.reset());

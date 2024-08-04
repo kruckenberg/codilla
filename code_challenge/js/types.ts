@@ -1,3 +1,5 @@
+import type { FileSystemTree } from "@webcontainer/api";
+export type { EditorView } from "@codemirror/view";
 export type { Terminal } from "@xterm/xterm";
 export type {
   FileNode,
@@ -5,6 +7,20 @@ export type {
   WebContainerProcess,
 } from "@webcontainer/api";
 
+export type MetaJSON = {
+  exports: string[];
+  file_system: FileSystemTree;
+  has_tests: boolean;
+  lesson_id: string;
+  next_lesson: {
+    title: string;
+    link: string;
+  };
+  starter_code: string;
+  user: {
+    authenticated: boolean;
+  };
+};
 export type Logger = (message: string) => void;
 export type JSONReport = {
   failures: [];
