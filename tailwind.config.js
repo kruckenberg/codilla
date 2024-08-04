@@ -10,7 +10,7 @@ export default {
   ],
   theme: {
     fontFamily: {
-      sans: ["Quicksand"],
+      sans: ["Ubuntu", "Quicksand"],
       mono: ['"Fira Code"'],
     },
     extend: {
