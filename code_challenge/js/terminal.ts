@@ -80,7 +80,7 @@ clearButtonEl.addEventListener("click", () => {
 
 completeButtonEl.addEventListener("click", async () => {
   if (user_authenticated) {
-    const response = await fetch("/api/challenge/complete", {
+    const response = await fetch("/codilla/api/challenge/complete", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

@@ -41,7 +41,6 @@ export class CodeContainer {
         throw new Error(`Process exited with code ${exitCode}`);
       }
     } catch (error) {
-      console.error(error);
       this.logger(error?.message || "Something went wrong");
     }
   }
@@ -70,16 +69,7 @@ export class CodeContainer {
     );
   }
 
-  async runTest(exports: string[] = []) {
-    try {
-      let source = await this.container.fs.readFile("source.js", "utf-8");
-      source = `${addExports(source, exports)}`;
-      await this.container.fs.writeFile("source.js", source);
-    } catch (error) {
-      this.logger(error?.message || "Something went wrong");
-      return;
-    }
-
+  async runTest() {
     const response = await this.container.spawn("npm", ["test"]);
 
     if (await response.exit) {
@@ -107,7 +97,6 @@ export class CodeContainer {
         },
       }),
     );
-
     const input = shellProcess.input.getWriter();
     terminal.onData((data: string) => {
       input.write(data);
@@ -118,8 +107,14 @@ export class CodeContainer {
     return shellProcess;
   }
 
-  async writeSource(code: string) {
-    await this.container.fs.writeFile("source.js", code);
+  async writeSource(source: string, exports: string[]) {
+    try {
+      const modifiedSource = addExports(source, exports);
+      await this.container.fs.writeFile("source.js", modifiedSource);
+    } catch (error) {
+      this.logger(error?.message || "Something went wrong");
+      throw error;
+    }
   }
 
   async init() {

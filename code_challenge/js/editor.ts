@@ -101,8 +101,7 @@ container.init();
  ****************************************************/
 async function saveCode() {
   const code = editorView.state.doc.toString();
-  await container.writeSource(code);
-  fetch("/api/challenge/save", {
+  fetch("/codilla/api/challenge/save", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -116,9 +115,10 @@ async function saveCode() {
  * Action buttons
  ****************************************************/
 runCodeButtonEl.addEventListener("click", async () => {
-  saveCode();
+  const code = editorView.state.doc.toString();
+  await saveCode();
   clearOutput();
-  await container.writeSource(editorView.state.doc.toString());
+  await container.writeSource(code, []);
   container.runCode();
 });
 
@@ -126,16 +126,23 @@ saveCodeButtonEl.addEventListener("click", saveCode);
 
 testCodeButtonEl.addEventListener("click", async () => {
   const code = editorView.state.doc.toString();
-  await container.writeSource(code);
+  await saveCode();
+  clearOutput();
+  try {
+    await container.writeSource(code, exports);
+  } catch (error) {
+    // bail if the code is invalid
+    return;
+  }
+
   if (hasTests) {
-    clearOutput();
-    container.runTest(exports);
+    container.runTest();
     // TODO: handle failed tests
     return;
   }
 
   if (user_authenticated) {
-    const response = await fetch("/api/challenge/complete", {
+    const response = await fetch("/codilla/api/challenge/complete", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -161,8 +168,9 @@ resetCodeButtonEl.addEventListener("click", async () => {
       extensions: [basicSetup, dracula, extendTheme, javascript()],
     }),
   );
-  await container.writeSource(code);
-  fetch("/api/challenge/reset", {
+  saveCode();
+  await container.writeSource(code, exports);
+  fetch("/codilla/api/challenge/reset", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

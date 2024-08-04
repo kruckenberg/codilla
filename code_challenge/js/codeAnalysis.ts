@@ -1,5 +1,6 @@
 import { parse } from "acorn";
 import { simple } from "acorn-walk";
+import { generate } from "astring";
 
 /**
  * Verifies that the source code contains the expected functions and
@@ -31,5 +32,5 @@ export function addExports(source: string, exportNames: string[]): string {
     }
   }
 
-  return `${source} export { ${exportNames.join(", ")} };`;
+  return `${generate(ast)} export { ${exportNames.join(", ")} };`;
 }
