@@ -23,8 +23,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "app",
-    "code_challenge",
     "common",
+    "nrp",
+    "code_challenge",
 ]
 
 MIDDLEWARE = [
