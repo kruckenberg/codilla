@@ -45,7 +45,7 @@ export class CodeContainer {
     this.meta = meta;
     this.apiRoot = apiRoot;
     this.csrfToken = csrfToken;
-    this.files = meta.file_system;
+    this.files = meta?.file_system;
     this.logger = logger;
     this.editor = editor;
     this.output = output;
@@ -234,7 +234,7 @@ export class CodeContainer {
   async init() {
     if (!this.container) {
       this.container = await WebContainer.boot();
-      await this.container.mount(this.files);
+      this.files && (await this.container.mount(this.files));
       // only install dependencies if tests exist
       if (this.files?.["test.js"]) {
         await this.installDependencies();
