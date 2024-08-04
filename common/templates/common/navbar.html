@@ -1,20 +1,35 @@
 {% load static %}
-<nav class="h-24 w-full uk-navbar-container uk-navbar flex justify-between uk-padding-small">
-  <div class="flex place-items-center">
-    <img src="{% static 'images/icon.png' %}" style="height: 75px" />
-    <h1 class="uk-h1">codilla</h1>
+<nav id="top-nav"
+     class="uk-navbar-container flex justify-between uk-padding-small"
+     uk-navbar>
+  <div class="uk-navbar-left">
+    <ul class="uk-navbar-nav">
+      <li>
+        <a href="{% url 'homepage' %}">
+          <img src="{% static 'images/nrp-icon.png' %}" style="height: 50px" />
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'courses' %}">
+          <img src="{% static 'images/codilla-icon.png' %}" style="height: 50px" />
+        </a>
+      </li>
+    </ul>
   </div>
-  <div class="flex justify-between place-items-center">
+  <div class="uk-navbar-right">
     {% if request.user.is_authenticated %}
-      <p>{{ request.user.username }}</p>
-      <form action="{% url 'logout' %}"
-            method="post"
-            class="flex place-items-center uk-padding uk-margin-remove-bottom">
+      <p class="prose">{{ request.user.username }}</p>
+      <form id="logout" action="{% url 'logout' %}" method="post">
         {% csrf_token %}
-        <button type="submit" class="uk-button uk-button-default uk-button-small">Logout</button>
+        <!-- <button type="submit" -->
+        <!--         class="uk-button uk-button-default uk-button-small align-middle">Logout</button> -->
       </form>
+      <input type="submit"
+             form="logout"
+             class="uk-button uk-button-default uk-button-small"
+             value="log out">
     {% else %}
       <a href="{% url 'login' %}?next={{ request.path }}"
-         class="uk-button uk-button-primary uk-button-small">Log In</a>
+         class="uk-button uk-button-primary uk-button-small">log in</a>
     {% endif %}
   </nav>
