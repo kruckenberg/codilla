@@ -32,7 +32,15 @@
   {% endblock editor %}
   <!-- Output -->
   {% block output %}
-    <div id="output" class="h-full w-full"></div>
+    <div class="relative h-full w-full flex ">
+      <div id="output" class="absolute h-full w-full"></div>
+      <div class="absolute uk-padding-small inset-x-0 bottom-0 w-full flex justify-end">
+        <a href="{{ challenge.next_lesson.link }}"
+           id="next-challenge-button"
+           style="display: none"
+           class="uk-button uk-button-primary">next challenge</a>
+      </div>
+    </div>
   {% endblock output %}
   <!-- Instructions -->
   {% block instructions %}

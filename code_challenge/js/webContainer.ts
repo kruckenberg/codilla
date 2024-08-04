@@ -175,7 +175,7 @@ export class CodeContainer {
         this.meta.exports,
       );
     } catch (error) {
-      return;
+      return false;
     }
 
     if (!this.meta.has_tests) {
@@ -190,25 +190,19 @@ export class CodeContainer {
         );
       }
       window.location.assign(this.meta.next_lesson.link);
-      return;
+      return true;
     }
 
     const response = await this.container.spawn("npm", ["test"]);
 
     if (await response.exit) {
       this.logger("Something went wrong while running tests");
-      return;
+      return false;
     }
 
     const passed = await this.reportTestResults();
 
     if (passed) {
-      this.logger("Next lesson in 5 seconds...");
-      setTimeout(
-        () => window.location.assign(this.meta.next_lesson.link),
-        5000,
-      );
-
       if (this.meta.user.authenticated) {
         this.callApi(
           "complete",
@@ -229,6 +223,8 @@ export class CodeContainer {
         { method: "PUT" },
       );
     }
+
+    return passed;
   }
 
   async init() {

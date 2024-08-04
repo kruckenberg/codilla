@@ -17,9 +17,11 @@ const saveCodeButtonEl = document.getElementById("save-code-button");
 const testCodeButtonEl = document.getElementById("test-code-button");
 const csrfToken =
   document.getElementById("csrf-token")?.getAttribute("data-csrf-token") || "";
+const nextChallengeEl = document.getElementById("next-challenge-button");
 
 if (
   !codeEditorEl ||
+  !nextChallengeEl ||
   !outputEl ||
   !resetCodeButtonEl ||
   !runCodeButtonEl ||
@@ -97,10 +99,26 @@ container.init();
 /*****************************************************
  * Action buttons
  ****************************************************/
+[
+  runCodeButtonEl,
+  saveCodeButtonEl,
+  testCodeButtonEl,
+  resetCodeButtonEl,
+].forEach((el) => {
+  el.addEventListener("click", () => {
+    nextChallengeEl.style.display = "none";
+  });
+});
+
 runCodeButtonEl.addEventListener("click", async () => container.run());
 
 saveCodeButtonEl.addEventListener("click", async () => container.save());
 
-testCodeButtonEl.addEventListener("click", async () => container.test());
+testCodeButtonEl.addEventListener("click", async () => {
+  const passed = await container.test();
+  if (passed) {
+    nextChallengeEl.style.display = "block";
+  }
+});
 
 resetCodeButtonEl.addEventListener("click", async () => container.reset());
