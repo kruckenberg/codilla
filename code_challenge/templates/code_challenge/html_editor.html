@@ -1,8 +1,8 @@
-{% extends "code_challenge/base.html" %}
+{% extends "code_challenge/html_base.html" %}
 {% load static %}
 {% block editor %}
   {{ challenge|json_script:"meta-json" }}
-  <script src="{% static 'js/editor.js' %}" defer></script>
+  <script src="{% static 'js/htmlEditor.js' %}" defer></script>
   <div id="csrf-token" data-csrf-token="{{ csrf_token }}"></div>
   <div class="relative h-full w-full">
     <div id="code-editor" class="absolute h-full w-full"></div>
@@ -32,15 +32,7 @@
   {% endblock editor %}
   <!-- Output -->
   {% block output %}
-    <div class="relative h-full w-full flex">
-      <div id="output" class="absolute h-full w-full"></div>
-      <div class="absolute uk-padding-small inset-x-0 bottom-0 w-full flex justify-end">
-        <a href="{{ challenge.next_lesson.link }}"
-           id="next-challenge-button"
-           style="display: none"
-           class="uk-button uk-button-primary">next challenge</a>
-      </div>
-    </div>
+    <iframe id="output" class="h-full w-full"></iframe>
   {% endblock output %}
   <!-- Instructions -->
   {% block instructions %}

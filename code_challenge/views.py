@@ -87,6 +87,8 @@ def lesson(request, course_slug="", unit_slug="", lesson_slug=""):
         challenge = Challenge(completed=False)
 
     if lesson.type == "editor":
+        if lesson.language == "html":
+            return render_html_editor(request, lesson, challenge)
         return render_editor(request, lesson, challenge)
     if lesson.type == "repl":
         return render_terminal(request, lesson, challenge)
@@ -132,6 +134,44 @@ def render_editor(request, lesson, challenge):
     }
 
     return render(request, "code_challenge/editor.html", context=context)
+
+
+def render_html_editor(request, lesson, challenge):
+    course_title = lesson.parent.parent.title
+
+    context = {
+        "challenge": {
+            "title": lesson.title,
+            "lesson_id": lesson.id,
+            "completed": challenge.completed,
+            "has_tests": lesson.tests,
+            "exports": lesson.exports,
+            "file_system": lesson.create_file_system(challenge.code or None),
+            "starter_code": lesson.source_file,
+            "instructions": markdown.markdown(
+                lesson.instructions_file, extensions=["fenced_code", "codehilite"]
+            ),
+            "parent": {
+                "link": reverse("course_view", args=[lesson.parent.parent.slug]),
+                "title": course_title,
+            },
+            "next_lesson": {
+                "link": reverse("lesson_view", args=lesson.next.id.split("/"))
+                if lesson.next
+                else reverse("course_view", args=[lesson.parent.parent.slug]),
+                "title": lesson.next.title if lesson.next else course_title,
+            },
+            "previous_lesson": {
+                "link": reverse("lesson_view", args=lesson.previous.id.split("/"))
+                if lesson.previous
+                else reverse("course_view", args=[lesson.parent.parent.slug]),
+                "title": lesson.previous.title if lesson.previous else course_title,
+            },
+            "user": {"authenticated": request.user.is_authenticated},
+        },
+    }
+
+    return render(request, "code_challenge/html_editor.html", context=context)
 
 
 def render_terminal(request, lesson, challenge):

@@ -1,0 +1,37 @@
+{% extends "common/base.html" %}
+{% block page-content %}
+  <div class="grid grid-cols-5 grid-rows-7 gap-4 h-full w-full">
+    <div class="col-span-3 row-span-3 h-full">
+      <div id="challenge-nav"
+           class="uk-padding-left uk-padding uk-padding-remove-top uk-padding-remove-bottom flex place-content-between">
+        <a href="{{ challenge.parent.link }}"
+           uk-icon="icon: home"
+           uk-tooltip="{{ challenge.parent.title }}"></a>
+        <div>
+          <a href="{{ challenge.previous_lesson.link }}"
+             uk-icon="icon: chevron-double-left"
+             uk-tooltip="{{ challenge.previous_lesson.title }}"></a>
+          <a href="{{ challenge.next_lesson.link }}"
+             uk-icon="icon: chevron-double-right"
+             uk-tooltip="{{ challenge.next_lesson.title }}"></a>
+        </div>
+        {% if challenge.completed %}
+          <span class="text-green-500"
+                uk-icon="icon: check"
+                uk-tooltip="Challenge complete!"></span>
+        {% else %}
+          <span class=""
+                uk-icon="icon: minus-circle"
+                uk-tooltip="Challenge not yet complete or not logged in"></span>
+        {% endif %}
+      </div>
+      {% block instructions %}{% endblock %}
+    </div>
+    <div class="col-span-3 row-span-4 row-start-4 h-full uk-margin-top">
+      {% block editor %}{% endblock %}
+    </div>
+    <div class="col-span-2 row-span-7 col-start-4 row-start-1 flex flex-col">
+      {% block output %}{% endblock %}
+    </div>
+  </div>
+{% endblock page-content %}
