@@ -19,6 +19,7 @@ class Lesson:
 
         self.title = self._metadata.get("title")
         self.slug = self._metadata.get("slug")
+        self.language = self._metadata.get("language")
         self.type = self._metadata.get("type")
         self.version = self._metadata.get("version")
         self.tests = self._metadata.get("tests")
@@ -26,20 +27,67 @@ class Lesson:
         self.link = f"{parent.link}/{self.slug}"
         self.id = self.link[1:]
 
-        self.source_file = self.read_file(os.path.join(directory, "source.js"))
-        self.test_file = self.read_file(os.path.join(directory, "test.js"))
-        self.instructions_file = self.read_file(
-            os.path.join(directory, "instructions.md")
-        )
+        self.source_file = self.read_file(directory, "source")
+        self.test_file = self.read_file(directory, "test")
+        self.instructions_file = self.read_file(directory, "instructions")
 
-    def read_file(self, filename):
+    def read_file(self, directory: str, file_type: str):
+        filename_by_type = {
+            "html": {
+                "instructions": "instructions.md",
+                "source": "source.html",
+                "test": "test.js",
+            },
+            "javascript": {
+                "instructions": "instructions.md",
+                "source": "source.js",
+                "test": "test.js",
+            },
+            "python": {
+                "instructions": "instructions.md",
+                "source": "source.py",
+                "test": "test.py",
+            },
+        }
+
+        filename = filename_by_type.get(self.language, {}).get(file_type)
+
+        if not filename:
+            return ""
+
+        path = os.path.join(directory, filename)
+
         try:
-            with open(filename, "r") as file:
+            with open(path, "r") as file:
                 return file.read()
         except FileNotFoundError:
             return ""
 
-    def create_file_system(self, saved_code=None):
+    def create_file_system(self, saved_code: str | None):
+        if self.type == "repl":
+            return {}
+        if self.language == "html":
+            return self.create_file_system_html(saved_code)
+        if self.language == "javascript":
+            return self.create_file_system_javascript(saved_code)
+        if self.language == "python":
+            return self.create_file_system_python(saved_code)
+
+    def create_file_system_html(self, saved_code: str | None):
+        return {
+            "source.html": {
+                "file": {
+                    "contents": saved_code or self.source_file,
+                },
+            },
+            "test.js": {
+                "file": {
+                    "contents": self.test_file,
+                },
+            },
+        }
+
+    def create_file_system_javascript(self, saved_code: str | None):
         mochaConfig = json.dumps(
             {"reporter": "json", "reporterOptions": ["output=./test-results.json"]}
         )
@@ -75,6 +123,20 @@ class Lesson:
                 },
             },
             "test.js": {
+                "file": {
+                    "contents": self.test_file,
+                },
+            },
+        }
+
+    def create_file_system_python(self, saved_code: str | None):
+        return {
+            "source.py": {
+                "file": {
+                    "contents": saved_code or self.source_file,
+                },
+            },
+            "test.py": {
                 "file": {
                     "contents": self.test_file,
                 },
