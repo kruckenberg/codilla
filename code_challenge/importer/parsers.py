@@ -74,8 +74,29 @@ class Lesson:
             return self.create_file_system_python(saved_code)
 
     def create_file_system_html(self, saved_code: str | None):
+        packageJSON = json.dumps(
+            {
+                "name": "codilla",
+                "type": "module",
+                "dependencies": {
+                    "chai": "^5.1.1",
+                    "mocha": "^10.6.0",
+                    "vite": "^5.4.0",
+                },
+                "scripts": {
+                    "test": "mocha test.js",
+                    "start": "vite --port 3111",
+                },
+            }
+        )
+
         return {
-            "source.html": {
+            "package.json": {
+                "file": {
+                    "contents": packageJSON,
+                },
+            },
+            "index.html": {
                 "file": {
                     "contents": saved_code or self.source_file,
                 },
