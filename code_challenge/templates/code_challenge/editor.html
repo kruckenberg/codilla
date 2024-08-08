@@ -7,6 +7,14 @@
   <div class="relative h-full w-full">
     <div id="code-editor" class="absolute h-full w-full"></div>
     <div class="absolute uk-padding-small uk-padding-remove-bottom inset-x-0 bottom-0 flex flex-row justify-end w-full">
+      <button id="next-challenge-button"
+              class="uk-button uk-button-primary m-1"
+              style="display: none"
+              uk-tooltip="Next challenge">
+        <a href="{{ challenge.next_lesson.link }}">
+          <span uk-icon="icon: chevron-double-right"></span>
+        </a>
+      </button>
       <button id="run-code-button"
               class="uk-button uk-button-primary m-1"
               uk-tooltip="Run code">
@@ -32,15 +40,7 @@
   {% endblock editor %}
   <!-- Output -->
   {% block output %}
-    <div class="relative h-full w-full flex">
-      <div id="output" class="absolute h-full w-full"></div>
-      <div class="absolute uk-padding-small inset-x-0 bottom-0 w-full flex justify-end">
-        <a href="{{ challenge.next_lesson.link }}"
-           id="next-challenge-button"
-           style="display: none"
-           class="uk-button uk-button-primary">next challenge</a>
-      </div>
-    </div>
+    <div id="output" class="h-full w-full"></div>
   {% endblock output %}
   <!-- Instructions -->
   {% block instructions %}
