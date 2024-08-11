@@ -6,8 +6,8 @@
   "main": "index.js",
   "scripts": {
     "build": "node build.js",
-    "tailwind:build": "tailwindcss -i ./common/css/input.css -o ./static/css/styles.css --minify",
-    "tailwind:watch": "tailwindcss -i ./common/css/input.css -o ./static/css/styles.css --watch"
+    "tailwind:build": "tailwindcss -i ./common/css/input.css -o ./common/static/css/styles.css --minify",
+    "tailwind:watch": "tailwindcss -i ./common/css/input.css -o ./common/static/css/styles.css --watch"
   },
   "author": "Nicholas Kruckenberg",
   "license": "GPL-3.0-or-later",

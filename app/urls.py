@@ -20,5 +20,5 @@ urlpatterns = [
     path("account/", include("account.urls")),
     path("codilla/", include("code_challenge.urls")),
     path("", include("nrp.urls")),
-    *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT, view=custom_serve),
+    *static(settings.STATIC_URL, view=custom_serve),
 ]
