@@ -21,8 +21,6 @@
       <p class="prose">{{ request.user.username }}</p>
       <form id="logout" action="{% url 'logout' %}" method="post">
         {% csrf_token %}
-        <!-- <button type="submit" -->
-        <!--         class="uk-button uk-button-default uk-button-small align-middle">Logout</button> -->
       </form>
       <input type="submit"
              form="logout"
