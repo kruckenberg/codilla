@@ -3,7 +3,7 @@ import markdown
 from django.http import Http404, HttpResponseServerError, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from .models import Challenge
+from .models import Challenge, Enrollments
 from .importer.build_courses import courses
 
 
@@ -17,10 +17,24 @@ def get_course(course_slug):
 
 
 def courses_index(request):
+    if request.user.is_authenticated:
+        enrolled_courses = Enrollments.objects.filter(user=request.user).values_list(
+            "course__id", flat=True
+        )
+
+        if enrolled_courses.count():
+            course_list = [
+                course for course in courses.values() if course.slug in enrolled_courses
+            ]
+        else:
+            course_list = courses.values()
+    else:
+        course_list = courses.values()
+
     return render(
         request,
         "code_challenge/courses.html",
-        context={"courses": list(courses.values())},
+        context={"courses": course_list},
     )
 
 

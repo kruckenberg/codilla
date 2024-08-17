@@ -42,3 +42,34 @@ class Challenge(models.Model):
     @property
     def lesson_id(self):
         return f"{self.course_slug}/{self.unit_slug}/{self.lesson_slug}"
+
+
+class Courses(models.Model):
+    # id should be course slug
+    id = models.CharField(primary_key=True, max_length=50, editable=True)
+    title = models.CharField(max_length=250)
+    repo = models.CharField(max_length=250)
+
+    class Meta:
+        db_table = "courses"
+
+    def __str__(self):
+        return str(self.title)
+
+
+class Enrollments(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="enrollments"
+    )
+    course = models.ForeignKey(Courses, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "enrollments"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "course"], name="unique_user_course"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.user} - {self.course}"
