@@ -17,4 +17,6 @@ CSRF_TRUSTED_ORIGINS = ["northridge.dev"]
 SESSION_COOKIE_SECURE = True
 
 
+INSTALL_APPS.append("django.contrib.staticfiles")
+
 STATIC_ROOT = "static/"
