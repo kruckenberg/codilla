@@ -1,6 +1,7 @@
 import { WebContainer } from "@webcontainer/api";
 import stripAnsi from "strip-ansi";
 import type {
+  API,
   EditorView,
   FileSystemTree,
   JSONReport,
@@ -9,8 +10,7 @@ import type {
 } from "../types";
 
 export class WebServer {
-  apiRoot: string;
-  csrfToken: string;
+  api: API;
   meta: MetaJSON;
   logger: Logger;
   editor: EditorView;
@@ -22,29 +22,26 @@ export class WebServer {
   files: FileSystemTree;
 
   constructor({
+    api,
     meta,
     logger,
     editor,
     output,
     iframe,
-    apiRoot,
-    csrfToken,
   }: {
+    api: API;
     meta: MetaJSON;
     logger: Logger;
     editor: EditorView;
     output: EditorView;
     iframe: HTMLIFrameElement;
-    apiRoot: string;
-    csrfToken: string;
   }) {
     if (this.container) {
       throw new Error("WebContainer already initialized");
     }
 
+    this.api = api;
     this.meta = meta;
-    this.apiRoot = apiRoot;
-    this.csrfToken = csrfToken;
     this.files = meta?.file_system;
     this.logger = logger;
     this.editor = editor;
@@ -101,11 +98,7 @@ export class WebServer {
       },
     });
     await this.writeSource(this.meta.starter_code);
-    this.callApi(
-      "reset",
-      { lesson_id: this.meta.lesson_id },
-      { method: "PUT" },
-    );
+    this.api.reset(this.meta.lesson_id);
   }
 
   async run() {
@@ -120,11 +113,7 @@ export class WebServer {
   async save() {
     const code = this.editor.state.doc.toString();
     try {
-      await this.callApi(
-        "save",
-        { lesson_id: this.meta.lesson_id, code },
-        { method: "PUT" },
-      );
+      await this.api.save(this.meta.lesson_id, code);
     } catch (error) {
       this.logger("Failed to save code");
     }
@@ -157,13 +146,9 @@ export class WebServer {
 
     if (!this.meta.has_tests) {
       if (this.meta.user.authenticated) {
-        this.callApi(
-          "complete",
-          {
-            lesson_id: this.meta.lesson_id,
-            code: this.editor.state.doc.toString(),
-          },
-          { method: "PUT" },
+        this.api.markComplete(
+          this.meta.lesson_id,
+          this.editor.state.doc.toString(),
         );
       }
       window.location.assign(this.meta.next_lesson.link);
@@ -181,24 +166,13 @@ export class WebServer {
 
     if (passed) {
       if (this.meta.user.authenticated) {
-        this.callApi(
-          "complete",
-          {
-            lesson_id: this.meta.lesson_id,
-            code: this.editor.state.doc.toString(),
-          },
-          { method: "PUT" },
+        this.api.markComplete(
+          this.meta.lesson_id,
+          this.editor.state.doc.toString(),
         );
       }
     } else {
-      this.callApi(
-        "save",
-        {
-          lesson_id: this.meta.lesson_id,
-          code: this.editor.state.doc.toString(),
-        },
-        { method: "PUT" },
-      );
+      this.api.save(this.meta.lesson_id, this.editor.state.doc.toString());
     }
 
     return passed;
@@ -211,31 +185,6 @@ export class WebServer {
       await this.installDependencies();
       this.serve();
     }
-  }
-
-  private getApiPath(op: string) {
-    const pathMap = {
-      complete: "/complete",
-      reset: "/reset",
-      save: "/save",
-    };
-
-    return `${this.apiRoot}${pathMap[op]}`;
-  }
-
-  private async callApi(
-    op: "complete" | "reset" | "save",
-    payload: object,
-    options: { method?: string },
-  ) {
-    fetch(this.getApiPath(op), {
-      method: options.method || "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": this.csrfToken,
-      },
-      body: JSON.stringify(payload),
-    });
   }
 
   private clearOutput() {

@@ -7,6 +7,8 @@ export type {
   WebContainerProcess,
 } from "@webcontainer/api";
 
+export type { API } from "./API";
+
 export type MetaJSON = {
   exports: string[];
   file_system: FileSystemTree;

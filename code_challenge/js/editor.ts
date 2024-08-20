@@ -3,6 +3,7 @@ import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 import { javascript } from "@codemirror/lang-javascript";
 import { dracula } from "thememirror";
+import { API } from "./API";
 import { CodeContainer } from "./webContainer";
 import type { FileNode, MetaJSON } from "./types";
 
@@ -84,11 +85,15 @@ function logToOutput(message: string) {
 }
 
 /*****************************************************
+ * API setup
+ ****************************************************/
+const api = new API({ csrfToken });
+
+/*****************************************************
  * Container setup
  ****************************************************/
 const container = new CodeContainer({
-  apiRoot: "/codilla/api/challenge",
-  csrfToken: csrfToken,
+  api,
   meta: metaJSON,
   logger: logToOutput,
   editor: editorView,

@@ -1,5 +1,6 @@
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
+import { API } from "./API";
 import { CodeContainer } from "./webContainer";
 import type { WebContainerProcess } from "./types";
 
@@ -30,13 +31,22 @@ const user_authenticated = metaJSON?.user?.authenticated || false;
 const next_lesson_link = metaJSON?.next_lesson?.link || "";
 
 /*****************************************************
+ * API setup
+ ****************************************************/
+const api = new API({ csrfToken });
+
+/*****************************************************
  * Create shell and launch Node REPL
  ****************************************************/
 function logToTerminal(_data: string) {}
 
 let shellProcess: WebContainerProcess;
 async function startTerminal() {
-  const codeContainer = new CodeContainer({ files: {}, logger: logToTerminal });
+  const codeContainer = new CodeContainer({
+    api,
+    meta: metaJSON,
+    logger: logToTerminal,
+  });
   await codeContainer.init();
   shellProcess = await codeContainer.startShell(terminal);
 }
