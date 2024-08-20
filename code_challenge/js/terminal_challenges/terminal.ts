@@ -1,8 +1,8 @@
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
-import { API } from "./API";
-import { CodeContainer } from "./webContainer";
-import type { WebContainerProcess } from "./types";
+import { API } from "../API";
+import { TerminalContainer } from "./TerminalContainer";
+import type { MetaJSON, WebContainerProcess } from "../types";
 
 /*****************************************************
  * Get HTML elements
@@ -17,7 +17,7 @@ if (!terminalEl || !completeButtonEl || !clearButtonEl) {
   throw new Error("Missing required HTML elements");
 }
 
-let metaJSON;
+let metaJSON: MetaJSON;
 try {
   metaJSON = JSON.parse(
     document.getElementById("meta-json")?.textContent || "",
@@ -42,8 +42,7 @@ function logToTerminal(_data: string) {}
 
 let shellProcess: WebContainerProcess;
 async function startTerminal() {
-  const codeContainer = new CodeContainer({
-    api,
+  const codeContainer = new TerminalContainer({
     meta: metaJSON,
     logger: logToTerminal,
   });
@@ -90,20 +89,7 @@ clearButtonEl.addEventListener("click", () => {
 
 completeButtonEl.addEventListener("click", async () => {
   if (user_authenticated) {
-    const response = await fetch("/codilla/api/challenge/complete", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrfToken,
-      },
-      body: JSON.stringify({ lesson_id }),
-    });
-
-    if (response.status === 200) {
-      window.location.assign(next_lesson_link);
-    }
-    // TODO: handle error response
-  } else {
+    await api.markComplete(lesson_id, "");
     window.location.assign(next_lesson_link);
   }
 });

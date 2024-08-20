@@ -5,7 +5,7 @@ const buildJS = async () => {
     entryPoints: {
       editor: "code_challenge/js/editor.ts",
       htmlEditor: "code_challenge/js/html_challenges/htmlEditor.ts",
-      terminal: "code_challenge/js/terminal.ts",
+      terminal: "code_challenge/js/terminal_challenges/terminal.ts",
     },
     bundle: true,
     minify: true,
