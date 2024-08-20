@@ -125,7 +125,8 @@ def render_editor(request, lesson, challenge):
             "file_system": lesson.create_file_system(challenge.code or None),
             "starter_code": lesson.source_file,
             "instructions": markdown.markdown(
-                lesson.instructions_file, extensions=["fenced_code", "codehilite"]
+                lesson.instructions_file,
+                extensions=["fenced_code", "codehilite", "attr_list", "extra"],
             ),
             "parent": {
                 "link": reverse("course_view", args=[lesson.parent.parent.slug]),
@@ -163,7 +164,8 @@ def render_html_editor(request, lesson, challenge):
             "file_system": lesson.create_file_system(challenge.code or None),
             "starter_code": lesson.source_file,
             "instructions": markdown.markdown(
-                lesson.instructions_file, extensions=["fenced_code", "codehilite"]
+                lesson.instructions_file,
+                extensions=["fenced_code", "codehilite", "attr_list", "extra"],
             ),
             "parent": {
                 "link": reverse("course_view", args=[lesson.parent.parent.slug]),
@@ -197,7 +199,8 @@ def render_terminal(request, lesson, challenge):
             "lesson_id": lesson.id,
             "completed": challenge.completed,
             "instructions": markdown.markdown(
-                lesson.instructions_file, extensions=["fenced_code", "codehilite"]
+                lesson.instructions_file,
+                extensions=["fenced_code", "codehilite", "attr_list", "extra"],
             ),
             "has_tests": lesson.tests,
             "parent": {
