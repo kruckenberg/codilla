@@ -5,6 +5,7 @@ import { javascript } from "@codemirror/lang-javascript";
 import { dracula } from "thememirror";
 import { API } from "./API";
 import { CodeContainer } from "./webContainer";
+import { IO } from "./IO";
 import type { FileNode, MetaJSON } from "./types";
 
 /*****************************************************
@@ -84,6 +85,12 @@ function logToOutput(message: string) {
   });
 }
 
+const io = new IO({
+  editor: editorView,
+  output: outputView,
+  logger: logToOutput,
+});
+
 /*****************************************************
  * API setup
  ****************************************************/
@@ -94,10 +101,8 @@ const api = new API({ csrfToken });
  ****************************************************/
 const container = new CodeContainer({
   api,
+  io,
   meta: metaJSON,
-  logger: logToOutput,
-  editor: editorView,
-  output: outputView,
 });
 container.init();
 

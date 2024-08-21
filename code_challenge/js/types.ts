@@ -8,6 +8,7 @@ export type {
 } from "@webcontainer/api";
 
 export type { API } from "./API";
+export type { IO } from "./IO";
 
 export type MetaJSON = {
   exports: string[];
