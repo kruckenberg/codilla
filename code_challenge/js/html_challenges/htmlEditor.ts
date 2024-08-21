@@ -4,6 +4,7 @@ import { EditorView } from "@codemirror/view";
 import { html } from "@codemirror/lang-html";
 import { dracula } from "thememirror";
 import { API } from "../API";
+import { IO } from "../IO";
 import { WebServer } from "./webServer";
 import type { FileNode, MetaJSON } from "../types";
 
@@ -85,6 +86,12 @@ function logToOutput(message: string) {
   });
 }
 
+const io = new IO({
+  editor: editorView,
+  output: outputView,
+  logger: logToOutput,
+});
+
 /*****************************************************
  * API setup
  ****************************************************/
@@ -95,11 +102,9 @@ const api = new API({ csrfToken });
  ****************************************************/
 const container = new WebServer({
   api,
-  meta: metaJSON,
-  logger: logToOutput,
-  editor: editorView,
-  output: outputView,
   iframe: iframeEl as HTMLIFrameElement,
+  io,
+  meta: metaJSON,
 });
 
 window.addEventListener("load", async () => {

@@ -1,21 +1,12 @@
 import { WebContainer } from "@webcontainer/api";
 import stripAnsi from "strip-ansi";
-import type {
-  API,
-  EditorView,
-  FileSystemTree,
-  JSONReport,
-  Logger,
-  MetaJSON,
-} from "../types";
+import type { API, FileSystemTree, IO, JSONReport, MetaJSON } from "../types";
 
 export class WebServer {
   api: API;
-  meta: MetaJSON;
-  logger: Logger;
-  editor: EditorView;
-  output: EditorView;
   iframe: HTMLIFrameElement;
+  io: IO;
+  meta: MetaJSON;
 
   container: WebContainer;
 
@@ -23,99 +14,68 @@ export class WebServer {
 
   constructor({
     api,
-    meta,
-    logger,
-    editor,
-    output,
     iframe,
+    io,
+    meta,
   }: {
     api: API;
-    meta: MetaJSON;
-    logger: Logger;
-    editor: EditorView;
-    output: EditorView;
     iframe: HTMLIFrameElement;
+    io: IO;
+    meta: MetaJSON;
   }) {
     if (this.container) {
       throw new Error("WebContainer already initialized");
     }
 
     this.api = api;
+    this.io = io;
     this.meta = meta;
     this.files = meta?.file_system;
-    this.logger = logger;
-    this.editor = editor;
-    this.output = output;
     this.iframe = iframe;
   }
 
   async installDependencies() {
     const installProcess = await this.container.spawn("npm", ["install"]);
-    installProcess.output.pipeTo(
-      new WritableStream({
-        write(data) {
-          console.log(data);
-        },
-      }),
-    );
     return installProcess.exit;
   }
 
-  async reportTestResults() {
+  async processTestResults() {
     let results: JSONReport;
-    let passed = true;
 
     try {
       results = JSON.parse(
         await this.container.fs.readFile("test-results.json", "utf-8"),
       );
     } catch (error) {
-      this.logger("Test results not found or not parsed.");
+      this.io.logger("Test results not found or not parsed.");
       return false;
     }
 
-    for (const result of results.tests) {
-      if (result.err.message) {
-        passed = false;
-        this.logger(`✗ ${result.fullTitle}\n`);
-      } else {
-        this.logger(`✓ ${result.fullTitle}\n`);
-      }
-    }
-    this.logger(
-      `\n-------------------------------------\n${results.stats.passes} passes, ${results.stats.failures} failures\n`,
-    );
-
-    return passed;
+    this.io.reportTestResults(results);
+    return results.tests.every((result) => !result.err.message);
   }
 
   async reset() {
-    this.editor.dispatch({
-      changes: {
-        from: 0,
-        to: this.editor.state.doc.length,
-        insert: this.meta.starter_code,
-      },
-    });
+    this.io.overwrite(this.meta.starter_code);
     await this.writeSource(this.meta.starter_code);
     this.api.reset(this.meta.lesson_id);
   }
 
   async run() {
     try {
-      await this.writeSource(this.editor.state.doc.toString());
+      await this.writeSource(this.io.editorState);
       this.save();
     } catch (error) {
-      this.logger(error?.message || "Something went wrong");
+      this.io.logger(error?.message || "Something went wrong");
     }
   }
 
   async save() {
-    const code = this.editor.state.doc.toString();
+    const code = this.io.editorState;
     try {
       await this.api.save(this.meta.lesson_id, code);
     } catch (error) {
-      this.logger("Failed to save code");
+      this.io.logger("Failed to save code");
     }
   }
 
@@ -136,20 +96,17 @@ export class WebServer {
   }
 
   async test() {
-    this.clearOutput();
+    this.io.clearOutput();
 
     try {
-      await this.writeSource(this.editor.state.doc.toString());
+      await this.writeSource(this.io.editorState);
     } catch (error) {
       return false;
     }
 
     if (!this.meta.has_tests) {
       if (this.meta.user.authenticated) {
-        this.api.markComplete(
-          this.meta.lesson_id,
-          this.editor.state.doc.toString(),
-        );
+        this.api.markComplete(this.meta.lesson_id, this.io.editorState);
       }
       window.location.assign(this.meta.next_lesson.link);
       return true;
@@ -158,21 +115,18 @@ export class WebServer {
     const response = await this.container.spawn("npm", ["test"]);
 
     if (await response.exit) {
-      this.logger("Something went wrong while running tests");
+      this.io.logger("Something went wrong while running tests");
       return false;
     }
 
-    const passed = await this.reportTestResults();
+    const passed = await this.processTestResults();
 
     if (passed) {
       if (this.meta.user.authenticated) {
-        this.api.markComplete(
-          this.meta.lesson_id,
-          this.editor.state.doc.toString(),
-        );
+        this.api.markComplete(this.meta.lesson_id, this.io.editorState);
       }
     } else {
-      this.api.save(this.meta.lesson_id, this.editor.state.doc.toString());
+      this.api.save(this.meta.lesson_id, this.io.editorState);
     }
 
     return passed;
@@ -187,16 +141,6 @@ export class WebServer {
     }
   }
 
-  private clearOutput() {
-    this.output.dispatch({
-      changes: {
-        from: 0,
-        to: this.output.state.doc.length,
-        insert: "",
-      },
-    });
-  }
-
   private makeAnsiStripper() {
     return new TransformStream({
       transform: (
@@ -207,7 +151,7 @@ export class WebServer {
   }
 
   private makeWriter() {
-    const logger = this.logger;
+    const logger = this.io.logger;
     return new WritableStream({ write: logger });
   }
 
