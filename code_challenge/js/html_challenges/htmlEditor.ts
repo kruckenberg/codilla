@@ -5,7 +5,7 @@ import { html } from "@codemirror/lang-html";
 import { dracula } from "thememirror";
 import { API } from "../API";
 import { IO } from "../IO";
-import { WebServer } from "./webServer";
+import { WebServer } from "./WebServer";
 import type { FileNode, MetaJSON } from "../types";
 
 /*****************************************************
