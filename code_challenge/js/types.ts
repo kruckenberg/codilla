@@ -8,6 +8,7 @@ export type {
 } from "@webcontainer/api";
 
 export type { API } from "./API";
+
 export type { IO } from "./IO";
 
 export type MetaJSON = {
@@ -24,7 +25,9 @@ export type MetaJSON = {
     authenticated: boolean;
   };
 };
+
 export type Logger = (message: string) => void;
+
 export type JSONReport = {
   failures: [];
   passes: [];

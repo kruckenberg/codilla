@@ -4,7 +4,7 @@ import { EditorView } from "@codemirror/view";
 import { javascript } from "@codemirror/lang-javascript";
 import { dracula } from "thememirror";
 import { API } from "./API";
-import { CodeContainer } from "./webContainer";
+import { CodeContainer } from "./CodeContainer";
 import { IO } from "./IO";
 import type { FileNode, MetaJSON } from "./types";
 
