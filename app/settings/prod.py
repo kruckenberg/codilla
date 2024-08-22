@@ -18,3 +18,4 @@ SESSION_COOKIE_SECURE = True
 
 
 INSTALLED_APPS.append("django.contrib.staticfiles")
+STATIC_ROOT = "static/"
