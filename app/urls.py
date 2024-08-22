@@ -30,6 +30,6 @@ urlpatterns = [
     path("account/", include("account.urls")),
     path("codilla/", include("code_challenge.urls")),
     path("", include("nrp.urls")),
-    *static(settings.STATIC_URL, view=custom_serve),
     path("logout/", custom_logout_view, name="logout"),
+    *static(settings.STATIC_URL, view=custom_serve),
 ]

@@ -2,7 +2,7 @@ from .base import *
 
 DEBUG = False
 
-ADMINS = [("nkruc", "nkruckenberg@gmail.com")]
+ADMINS = [("nk", "nkruckenberg@gmail.com")]
 
 ALLOWED_HOSTS = [
     "northridge.dev",
@@ -13,10 +13,8 @@ ALLOWED_HOSTS = [
 CSRF_COOKIE_DOMAIN = "northridge.dev"
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SECURE = True
-CSRF_TRUSTED_ORIGINS = ["northridge.dev"]
+CSRF_TRUSTED_ORIGINS = ["https://*.northridge.dev"]
 SESSION_COOKIE_SECURE = True
 
 
-INSTALL_APPS.append("django.contrib.staticfiles")
-
-STATIC_ROOT = "static/"
+INSTALLED_APPS.append("django.contrib.staticfiles")
