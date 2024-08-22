@@ -120,6 +120,7 @@ def render_editor(request, lesson, challenge):
             "title": lesson.title,
             "lesson_id": lesson.id,
             "completed": challenge.completed,
+            "language": lesson.language,
             "has_tests": lesson.tests,
             "exports": lesson.exports,
             "file_system": lesson.create_file_system(challenge.code or None),

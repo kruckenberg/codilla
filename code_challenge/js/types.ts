@@ -1,11 +1,12 @@
 import type { FileSystemTree } from "@webcontainer/api";
-export type { EditorView } from "@codemirror/view";
+
 export type { Terminal } from "@xterm/xterm";
 export type {
   FileNode,
   FileSystemTree,
   WebContainerProcess,
 } from "@webcontainer/api";
+export type { PyodideInterface } from "pyodide";
 
 export type { API } from "./API";
 
