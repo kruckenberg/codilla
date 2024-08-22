@@ -92,6 +92,12 @@ export class WebServer {
 
     this.container.on("server-ready", (port, url) => {
       this.iframe.src = url;
+
+      const placeholder = document.getElementById("iframe-placeholder");
+      if (placeholder) {
+        placeholder.style.display = "none";
+      }
+      this.iframe.style.display = "block";
     });
   }
 
