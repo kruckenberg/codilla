@@ -9,7 +9,7 @@ venv/
 node_modules/
 
 # static
-static/
+/static/
 **/static/css/
 
 # Database
