@@ -2,32 +2,37 @@
 <nav id="top-nav"
      class="uk-navbar-container flex justify-between uk-padding-small"
      uk-navbar>
-  <div class="uk-navbar-left">
-    <ul class="uk-navbar-nav">
-      <li>
-        <a href="{% url 'homepage' %}">
-          <img src="{% static 'images/nrp-icon.png' %}" style="height: 50px" />
-        </a>
-      </li>
-      <li>
-        <a href="{% url 'courses' %}">
-          <img src="{% static 'images/codilla-icon.png' %}" style="height: 50px" />
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div class="uk-navbar-right">
-    {% if request.user.is_authenticated %}
-      <p class="prose">{{ request.user.username }}</p>
-      <form id="logout" action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-      </form>
-      <input type="submit"
-             form="logout"
-             class="uk-button uk-button-default uk-button-small"
-             value="log out">
-    {% else %}
-      <a href="{% url 'login' %}?next={{ request.path }}"
-         class="uk-button uk-button-primary uk-button-small">log in</a>
-    {% endif %}
-  </nav>
+    <div class="uk-navbar-left">
+        <ul class="uk-navbar-nav">
+            <li>
+                <a href="{% url 'homepage' %}">
+                    <img src="{% static 'images/nrp-icon.png' %}" style="height: 50px" />
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'courses' %}">
+                    <img src="{% static 'images/codilla-icon.png' %}" style="height: 50px" />
+                </a>
+            </li>
+            <li>
+                <a href="https://py.northridge.dev/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fnorthridge-dev%2Fpython-bootcamp&urlpath=tree%2Fpython-bootcamp%2F&branch=main">
+                    <img src="{% static 'images/pybc-icon.png' %}" style="height: 50px" />
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="uk-navbar-right">
+        {% if request.user.is_authenticated %}
+            <p class="prose">{{ request.user.username }}</p>
+            <form id="logout" action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+            </form>
+            <input type="submit"
+                   form="logout"
+                   class="uk-button uk-button-default uk-button-small"
+                   value="log out">
+        {% else %}
+            <a href="{% url 'login' %}?next={{ request.path }}"
+               class="uk-button uk-button-primary uk-button-small">log in</a>
+        {% endif %}
+    </nav>
