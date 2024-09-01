@@ -1,5 +1,6 @@
 from itertools import groupby
 import markdown
+from markdown.extensions.codehilite import CodeHiliteExtension
 from django.http import Http404, HttpResponseServerError, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -14,6 +15,18 @@ def get_course(course_slug):
         raise Http404()
 
     return course
+
+
+def render_markdown(code: str) -> str:
+    return markdown.markdown(
+        code,
+        extensions=[
+            "fenced_code",
+            CodeHiliteExtension(noclasses=True, pygments_style="dracula"),
+            "attr_list",
+            "extra",
+        ],
+    )
 
 
 def courses_index(request):
@@ -125,10 +138,7 @@ def render_editor(request, lesson, challenge):
             "exports": lesson.exports,
             "file_system": lesson.create_file_system(challenge.code or None),
             "starter_code": lesson.source_file,
-            "instructions": markdown.markdown(
-                lesson.instructions_file,
-                extensions=["fenced_code", "codehilite", "attr_list", "extra"],
-            ),
+            "instructions": render_markdown(lesson.instructions_file),
             "parent": {
                 "link": reverse("course_view", args=[lesson.parent.parent.slug]),
                 "title": course_title,
@@ -164,10 +174,7 @@ def render_html_editor(request, lesson, challenge):
             "exports": lesson.exports,
             "file_system": lesson.create_file_system(challenge.code or None),
             "starter_code": lesson.source_file,
-            "instructions": markdown.markdown(
-                lesson.instructions_file,
-                extensions=["fenced_code", "codehilite", "attr_list", "extra"],
-            ),
+            "instructions": render_markdown(lesson.instructions_file),
             "parent": {
                 "link": reverse("course_view", args=[lesson.parent.parent.slug]),
                 "title": course_title,
@@ -199,10 +206,7 @@ def render_terminal(request, lesson, challenge):
             "title": lesson.title,
             "lesson_id": lesson.id,
             "completed": challenge.completed,
-            "instructions": markdown.markdown(
-                lesson.instructions_file,
-                extensions=["fenced_code", "codehilite", "attr_list", "extra"],
-            ),
+            "instructions": render_markdown(lesson.instructions_file),
             "has_tests": lesson.tests,
             "parent": {
                 "link": reverse("course_view", args=[lesson.parent.parent.slug]),
