@@ -1,30 +1,30 @@
 {% extends "code_challenge/base.html" %}
 {% load static %}
 {% block editor %}
-  {{ challenge|json_script:"meta-json" }}
-  <script src="{% static 'js/terminal.js' %}" defer></script>
-  <div id="csrf-token" data-csrf-token="{{ csrf_token }}"></div>
-  <div class="relative h-full w-full">
-    <div id="terminal" class="absolute h-full w-full terminal"></div>
-    <div class="absolute -inset-x-10 bottom-0 flex flex-row justify-end w-full">
-      <button id="complete-button"
-              class="uk-button uk-button-primary m-1"
-              uk-tooltip="Complete">
-        <span uk-icon="icon: check"></span>
-      </button>
-      <button id="clear-button"
-              class="uk-button uk-button-default m-1"
-              uk-tooltip="Clear">
-        <span uk-icon="icon: trash"></span>
-      </button>
+    {{ challenge|json_script:"meta-json" }}
+    <script src="{% static 'js/terminal.js' %}" defer></script>
+    <div id="csrf-token" data-csrf-token="{{ csrf_token }}"></div>
+    <div class="relative h-full w-full">
+        <div id="terminal" class="absolute h-full w-full terminal"></div>
+        <div class="absolute end-10 bottom-0 flex flex-row justify-end max-w-fit">
+            <button id="complete-button"
+                    class="uk-button uk-button-primary m-1"
+                    uk-tooltip="Complete">
+                <span uk-icon="icon: check"></span>
+            </button>
+            <button id="clear-button"
+                    class="uk-button uk-button-default m-1"
+                    uk-tooltip="Clear">
+                <span uk-icon="icon: trash"></span>
+            </button>
+        </div>
     </div>
-  </div>
 {% endblock editor %}
 <!-- Instructions -->
 {% block instructions %}
-  <div class="w-full h-full instruct overflow-hidden">
-    <div class="uk-card uk-card-body uk-height-1-1 custom-scrollbar overflow-auto">
-      <article class="prose uk-margin">{{ challenge.instructions |safe }}</article>
+    <div class="w-full h-full instruct overflow-hidden">
+        <div class="uk-card uk-card-body uk-height-1-1 custom-scrollbar overflow-auto">
+            <article class="prose uk-margin">{{ challenge.instructions |safe }}</article>
+        </div>
     </div>
-  </div>
 {% endblock instructions %}
