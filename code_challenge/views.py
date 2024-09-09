@@ -1,4 +1,4 @@
-from itertools import groupby
+from collections import defaultdict
 import markdown
 from markdown.extensions.codehilite import CodeHiliteExtension
 from django.http import Http404, HttpResponseServerError, JsonResponse
@@ -59,10 +59,9 @@ def course_view(request, course_slug=""):
             user=request.user, course_slug=course_slug, completed=True
         )
 
-        completed_by_unit = {
-            key: [challenge.lesson_id for challenge in list(group)]
-            for key, group in groupby(completed_lessons, lambda x: x.unit_slug)
-        }
+        completed_by_unit = defaultdict(list)
+        for challenge in completed_lessons:
+            completed_by_unit[challenge.unit_slug].append(challenge.lesson_id)
 
         lessons_by_unit = [
             [
