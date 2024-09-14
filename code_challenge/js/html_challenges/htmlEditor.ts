@@ -2,6 +2,8 @@ import { basicSetup } from "codemirror";
 import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 import { html } from "@codemirror/lang-html";
+import { css } from "@codemirror/lang-css";
+import { javascript } from "@codemirror/lang-javascript";
 import { dracula } from "thememirror";
 import { API } from "../API";
 import { IO } from "../IO";
@@ -11,19 +13,31 @@ import type { FileNode, MetaJSON } from "../types";
 /*****************************************************
  * Get HTML elements
  ****************************************************/
-const codeEditorEl = document.getElementById("code-editor");
+const htmlEditorEl = document.getElementById("html-editor");
+const cssEditorEl = document.getElementById("css-editor");
+const jsEditorEl = document.getElementById("js-editor");
 const iframeEl = document.getElementById("served-page");
 const outputEl = document.getElementById("output");
 const nextChallengeEl = document.getElementById("next-challenge-button");
-const resetCodeButtonEl = document.getElementById("reset-code-button");
-const runCodeButtonEl = document.getElementById("run-code-button");
-const saveCodeButtonEl = document.getElementById("save-code-button");
-const testCodeButtonEl = document.getElementById("test-code-button");
+const resetCodeButtonEl = document.getElementById(
+  "reset-code-button",
+) as HTMLButtonElement;
+const runCodeButtonEl = document.getElementById(
+  "run-code-button",
+) as HTMLButtonElement;
+const saveCodeButtonEl = document.getElementById(
+  "save-code-button",
+) as HTMLButtonElement;
+const testCodeButtonEl = document.getElementById(
+  "test-code-button",
+) as HTMLButtonElement;
 const csrfToken =
   document.getElementById("csrf-token")?.getAttribute("data-csrf-token") || "";
 
 if (
-  !codeEditorEl ||
+  !htmlEditorEl ||
+  !cssEditorEl ||
+  !jsEditorEl ||
   !nextChallengeEl ||
   !iframeEl ||
   !outputEl ||
@@ -60,36 +74,74 @@ let extendTheme = EditorView.theme({
   },
 });
 
-let editorState = EditorState.create({
-  doc: (files["index.html"] as FileNode).file.contents as string,
-  extensions: [basicSetup, dracula, extendTheme, html()],
-});
-
-let editorView = new EditorView({
-  state: editorState,
-  parent: codeEditorEl,
-});
-
 let initialOutputState = EditorState.create({
   doc: "",
   extensions: [EditorState.readOnly.of(true), dracula, extendTheme],
 });
 
-let outputView = new EditorView({
+let htmlEditorState = EditorState.create({
+  doc: (files["index.html"] as FileNode).file.contents as string,
+  extensions: [basicSetup, dracula, extendTheme, html()],
+});
+
+let htmlEditorView = new EditorView({
+  state: htmlEditorState,
+  parent: htmlEditorEl,
+});
+
+let htmlOutputView = new EditorView({
   state: initialOutputState,
   parent: outputEl,
 });
 
+let dummyOutputView = new EditorView({
+  state: initialOutputState,
+});
+
+let cssEditorState = EditorState.create({
+  doc: (files["styles.css"] as FileNode).file.contents as string,
+  extensions: [basicSetup, dracula, extendTheme, css()],
+});
+
+let cssEditorView = new EditorView({
+  state: cssEditorState,
+  parent: cssEditorEl,
+});
+
+let jsEditorState = EditorState.create({
+  doc: (files["script.js"] as FileNode).file.contents as string,
+  extensions: [basicSetup, dracula, extendTheme, javascript()],
+});
+
+let jsEditorView = new EditorView({
+  state: jsEditorState,
+  parent: jsEditorEl,
+});
+
 function logToOutput(message: string) {
-  outputView.dispatch({
-    changes: [{ from: outputView.state.doc.length, insert: message }],
+  htmlOutputView.dispatch({
+    changes: [{ from: htmlOutputView.state.doc.length, insert: message }],
   });
 }
 
-const io = new IO({
-  editor: editorView,
-  output: outputView,
+function dummyLogger(message: string) {}
+
+const htmlIO = new IO({
+  editor: htmlEditorView,
+  output: htmlOutputView,
   logger: logToOutput,
+});
+
+const cssIO = new IO({
+  editor: cssEditorView,
+  output: dummyOutputView,
+  logger: dummyLogger,
+});
+
+const jsIO = new IO({
+  editor: jsEditorView,
+  output: dummyOutputView,
+  logger: dummyLogger,
 });
 
 /*****************************************************
@@ -103,7 +155,9 @@ const api = new API({ csrfToken });
 const container = new WebServer({
   api,
   iframe: iframeEl as HTMLIFrameElement,
-  io,
+  htmlIO,
+  cssIO,
+  jsIO,
   meta: metaJSON,
 });
 

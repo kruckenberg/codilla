@@ -31,11 +31,17 @@ class Lesson:
         self.test_file = self.read_file(directory, "test")
         self.instructions_file = self.read_file(directory, "instructions")
 
+        if self.language == "html":
+            self.style_file = self.read_file(directory, "style")
+            self.script_file = self.read_file(directory, "script")
+
     def read_file(self, directory: str, file_type: str):
         filename_by_type = {
             "html": {
                 "instructions": "instructions.md",
                 "source": "source.html",
+                "style": "styles.css",
+                "script": "script.js",
                 "test": "test.js",
             },
             "javascript": {
@@ -74,6 +80,11 @@ class Lesson:
             return self.create_file_system_python(saved_code)
 
     def create_file_system_html(self, saved_code: str | None):
+        try:
+            parsed_saved_code = json.loads(saved_code or "")
+        except json.JSONDecodeError:
+            parsed_saved_code = {"html": saved_code, "css": "", "js": ""}
+
         packageJSON = json.dumps(
             {
                 "name": "codilla",
@@ -98,7 +109,17 @@ class Lesson:
             },
             "index.html": {
                 "file": {
-                    "contents": saved_code or self.source_file,
+                    "contents": parsed_saved_code["html"] or self.source_file,
+                },
+            },
+            "styles.css": {
+                "file": {
+                    "contents": parsed_saved_code["css"] or self.style_file,
+                },
+            },
+            "script.js": {
+                "file": {
+                    "contents": parsed_saved_code["js"] or self.script_file,
                 },
             },
             "test.js": {

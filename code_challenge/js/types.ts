@@ -54,3 +54,9 @@ export type JSONReport = {
     };
   }[];
 };
+
+export type HTMLStarterCode = {
+  html: string;
+  css: string;
+  js: string;
+};

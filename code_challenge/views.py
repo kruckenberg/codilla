@@ -1,4 +1,5 @@
 from collections import defaultdict
+import json
 import markdown
 from markdown.extensions.codehilite import CodeHiliteExtension
 from django.http import Http404, HttpResponseServerError, JsonResponse
@@ -6,6 +7,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from .models import Challenge, Enrollments
 from .importer.build_courses import courses
+from .importer.parsers import Lesson
 
 
 def get_course(course_slug):
@@ -27,6 +29,18 @@ def render_markdown(code: str) -> str:
             "extra",
         ],
     )
+
+
+def get_starter_code(lesson: Lesson):
+    if lesson.language == "html":
+        return json.dumps(
+            {
+                "html": lesson.source_file,
+                "css": lesson.style_file,
+                "js": lesson.script_file,
+            }
+        )
+    return lesson.source_file
 
 
 def courses_index(request):
@@ -136,7 +150,7 @@ def render_editor(request, lesson, challenge):
             "has_tests": lesson.tests,
             "exports": lesson.exports,
             "file_system": lesson.create_file_system(challenge.code or None),
-            "starter_code": lesson.source_file,
+            "starter_code": get_starter_code(lesson),
             "instructions": render_markdown(lesson.instructions_file),
             "parent": {
                 "link": reverse("course_view", args=[lesson.parent.parent.slug]),
@@ -172,7 +186,7 @@ def render_html_editor(request, lesson, challenge):
             "has_tests": lesson.tests,
             "exports": lesson.exports,
             "file_system": lesson.create_file_system(challenge.code or None),
-            "starter_code": lesson.source_file,
+            "starter_code": get_starter_code(lesson),
             "instructions": render_markdown(lesson.instructions_file),
             "parent": {
                 "link": reverse("course_view", args=[lesson.parent.parent.slug]),
