@@ -10,56 +10,41 @@ import { IO } from "../IO";
 import { WebServer } from "./WebServer";
 import type { FileNode, MetaJSON } from "../types";
 
+function getElementById<T extends HTMLElement>(elementId: string): T {
+  const element = document.getElementById(elementId);
+  if (!element) {
+    throw new Error(`Missing required element with ID: ${elementId}`);
+  }
+  return element as T;
+}
+
 /*****************************************************
  * Get HTML elements
  ****************************************************/
-const htmlEditorEl = document.getElementById("html-editor");
-const cssEditorEl = document.getElementById("css-editor");
-const jsEditorEl = document.getElementById("js-editor");
-const iframeEl = document.getElementById("served-page");
-const outputEl = document.getElementById("output");
-const nextChallengeEl = document.getElementById("next-challenge-button");
-const confirmResetModal = document.getElementById(
-  "confirm-modal",
-) as HTMLDialogElement;
-const confirmResetButtonEl = document.getElementById(
+const htmlEditorEl = getElementById<HTMLElement>("html-editor");
+const cssEditorEl = getElementById<HTMLElement>("css-editor");
+const jsEditorEl = getElementById<HTMLElement>("js-editor");
+const iframeEl = getElementById<HTMLIFrameElement>("served-page");
+const outputEl = getElementById<HTMLElement>("output");
+const nextChallengeEl = getElementById<HTMLElement>("next-challenge-button");
+const confirmResetModal = getElementById<HTMLDialogElement>("confirm-modal");
+const confirmResetButtonEl = getElementById<HTMLButtonElement>(
   "confirm-reset-button",
-) as HTMLButtonElement;
-const rejectResetButtonEl = document.getElementById(
+);
+const rejectResetButtonEl = getElementById<HTMLButtonElement>(
   "reject-reset-button",
-) as HTMLButtonElement;
-const resetCodeButtonEl = document.getElementById(
-  "reset-code-button",
-) as HTMLButtonElement;
-const runCodeButtonEl = document.getElementById(
-  "run-code-button",
-) as HTMLButtonElement;
-const saveCodeButtonEl = document.getElementById(
-  "save-code-button",
-) as HTMLButtonElement;
-const testCodeButtonEl = document.getElementById(
-  "test-code-button",
-) as HTMLButtonElement;
+);
+const resetCodeButtonEl =
+  getElementById<HTMLButtonElement>("reset-code-button");
+const runCodeButtonEl = getElementById<HTMLButtonElement>("run-code-button");
+const saveCodeButtonEl = getElementById<HTMLButtonElement>("save-code-button");
+const testCodeButtonEl = getElementById<HTMLButtonElement>("test-code-button");
+
+/*****************************************************
+ * Get dynamic data
+ ****************************************************/
 const csrfToken =
   document.getElementById("csrf-token")?.getAttribute("data-csrf-token") || "";
-
-if (
-  !htmlEditorEl ||
-  !cssEditorEl ||
-  !jsEditorEl ||
-  !nextChallengeEl ||
-  !confirmResetModal ||
-  !iframeEl ||
-  !outputEl ||
-  !resetCodeButtonEl ||
-  !confirmResetButtonEl ||
-  !rejectResetButtonEl ||
-  !runCodeButtonEl ||
-  !saveCodeButtonEl ||
-  !testCodeButtonEl
-) {
-  throw new Error("Missing required HTML elements");
-}
 
 let metaJSON: MetaJSON;
 try {
