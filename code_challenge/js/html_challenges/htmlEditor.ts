@@ -19,6 +19,15 @@ const jsEditorEl = document.getElementById("js-editor");
 const iframeEl = document.getElementById("served-page");
 const outputEl = document.getElementById("output");
 const nextChallengeEl = document.getElementById("next-challenge-button");
+const confirmResetModal = document.getElementById(
+  "confirm-modal",
+) as HTMLDialogElement;
+const confirmResetButtonEl = document.getElementById(
+  "confirm-reset-button",
+) as HTMLButtonElement;
+const rejectResetButtonEl = document.getElementById(
+  "reject-reset-button",
+) as HTMLButtonElement;
 const resetCodeButtonEl = document.getElementById(
   "reset-code-button",
 ) as HTMLButtonElement;
@@ -39,9 +48,12 @@ if (
   !cssEditorEl ||
   !jsEditorEl ||
   !nextChallengeEl ||
+  !confirmResetModal ||
   !iframeEl ||
   !outputEl ||
   !resetCodeButtonEl ||
+  !confirmResetButtonEl ||
+  !rejectResetButtonEl ||
   !runCodeButtonEl ||
   !saveCodeButtonEl ||
   !testCodeButtonEl
@@ -195,5 +207,14 @@ window.addEventListener("load", async () => {
     }
   });
 
-  resetCodeButtonEl.addEventListener("click", async () => container.reset());
+  confirmResetButtonEl.addEventListener("click", async () => {
+    await container.reset();
+    confirmResetModal.close();
+  });
+  rejectResetButtonEl.addEventListener("click", () =>
+    confirmResetModal.close(),
+  );
+  resetCodeButtonEl.addEventListener("click", () =>
+    confirmResetModal.showModal(),
+  );
 });
