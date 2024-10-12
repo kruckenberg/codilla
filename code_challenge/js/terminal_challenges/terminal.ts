@@ -2,20 +2,21 @@ import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import { API } from "../API";
 import { TerminalContainer } from "./TerminalContainer";
+import { getElementById } from "../utils";
 import type { MetaJSON, WebContainerProcess } from "../types";
 
 /*****************************************************
  * Get HTML elements
  ****************************************************/
-const terminalEl = document.getElementById("terminal");
-const completeButtonEl = document.getElementById("complete-button");
-const clearButtonEl = document.getElementById("clear-button");
+const terminalEl = getElementById<HTMLElement>("terminal");
+const completeButtonEl = getElementById<HTMLButtonElement>("complete-button");
+const clearButtonEl = getElementById<HTMLButtonElement>("clear-button");
+
+/*****************************************************
+ * Get dynamic data:w
+ ****************************************************/
 const csrfToken =
   document.getElementById("csrf-token")?.getAttribute("data-csrf-token") || "";
-
-if (!terminalEl || !completeButtonEl || !clearButtonEl) {
-  throw new Error("Missing required HTML elements");
-}
 
 let metaJSON: MetaJSON;
 try {

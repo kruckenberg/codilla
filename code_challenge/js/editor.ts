@@ -6,32 +6,28 @@ import { dracula } from "thememirror";
 import { API } from "./API";
 import { CodeContainer } from "./CodeContainer";
 import { IO } from "./IO";
+import { getElementById } from "./utils";
 import type { FileNode, MetaJSON } from "./types";
 
 /*****************************************************
  * Get HTML elements
  ****************************************************/
-const codeEditorEl = document.getElementById("code-editor");
-const outputEl = document.getElementById("output");
-const resetCodeButtonEl = document.getElementById("reset-code-button");
-const runCodeButtonEl = document.getElementById("run-code-button");
-const saveCodeButtonEl = document.getElementById("save-code-button");
-const testCodeButtonEl = document.getElementById("test-code-button");
+const codeEditorEl = getElementById<HTMLElement>("code-editor");
+const outputEl = getElementById<HTMLElement>("output");
+const nextChallengeEl = getElementById<HTMLButtonElement>(
+  "next-challenge-button",
+);
+const resetCodeButtonEl =
+  getElementById<HTMLButtonElement>("reset-code-button");
+const runCodeButtonEl = getElementById<HTMLButtonElement>("run-code-button");
+const saveCodeButtonEl = getElementById<HTMLButtonElement>("save-code-button");
+const testCodeButtonEl = getElementById<HTMLButtonElement>("test-code-button");
+
+/*****************************************************
+ * Get dynamic data
+ ****************************************************/
 const csrfToken =
   document.getElementById("csrf-token")?.getAttribute("data-csrf-token") || "";
-const nextChallengeEl = document.getElementById("next-challenge-button");
-
-if (
-  !codeEditorEl ||
-  !nextChallengeEl ||
-  !outputEl ||
-  !resetCodeButtonEl ||
-  !runCodeButtonEl ||
-  !saveCodeButtonEl ||
-  !testCodeButtonEl
-) {
-  throw new Error("Missing required HTML elements");
-}
 
 let metaJSON: MetaJSON;
 try {

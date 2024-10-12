@@ -8,15 +8,8 @@ import { dracula } from "thememirror";
 import { API } from "../API";
 import { IO } from "../IO";
 import { WebServer } from "./WebServer";
+import { getElementById } from "../utils";
 import type { FileNode, MetaJSON } from "../types";
-
-function getElementById<T extends HTMLElement>(elementId: string): T {
-  const element = document.getElementById(elementId);
-  if (!element) {
-    throw new Error(`Missing required element with ID: ${elementId}`);
-  }
-  return element as T;
-}
 
 /*****************************************************
  * Get HTML elements

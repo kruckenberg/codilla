@@ -1,0 +1,1 @@
+export { getElementById } from "./getElementsById";
