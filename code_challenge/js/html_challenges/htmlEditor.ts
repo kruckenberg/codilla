@@ -54,11 +54,13 @@ try {
   metaJSON = JSON.parse(
     document.getElementById("meta-json")?.textContent || "",
   );
-} catch (error) {
+} catch (_error) {
   throw new Error("Failed to parse challenge metadata");
 }
 
 const files = metaJSON.file_system;
+const hasTests = metaJSON.has_tests;
+
 /*****************************************************
  * Init codemirror editor
  ****************************************************/
@@ -181,8 +183,14 @@ window.addEventListener("load", async () => {
   saveCodeButtonEl.addEventListener("click", async () => container.save());
 
   testCodeButtonEl.addEventListener("click", async () => {
-    const passed = await container.test();
-    if (passed) {
+    await container.save();
+
+    if (hasTests) {
+      const passed = await container.test();
+      if (passed) {
+        nextChallengeEl.style.display = "block";
+      }
+    } else {
       nextChallengeEl.style.display = "block";
     }
   });
