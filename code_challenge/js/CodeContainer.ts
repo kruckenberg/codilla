@@ -50,18 +50,13 @@ export class CodeContainer {
   }
 
   async run() {
-    try {
-      try {
-        this.writeSource(this.io.editorState, false);
-      } catch (error) {
-        return;
-      }
+    this.save();
+    this.io.clearOutput();
 
-      this.save();
-      this.io.clearOutput();
+    try {
+      await this.writeSource(this.io.editorState, false);
 
       const response = await this.container.spawn("node", ["source.js"]);
-
       this.io.pipeOutput(response, true);
 
       const exitCode = await response.exit;
@@ -130,14 +125,7 @@ export class CodeContainer {
   }
 
   private async writeSource(source: string, exports: string[] | false) {
-    try {
-      const modifiedSource = exports
-        ? addExports(source, exports)
-        : lint(source);
-      await this.container.fs.writeFile("source.js", modifiedSource);
-    } catch (error) {
-      this.io.logger(error?.message || "Something went wrong");
-      throw error;
-    }
+    const modifiedSource = exports ? addExports(source, exports) : lint(source);
+    await this.container.fs.writeFile("source.js", modifiedSource);
   }
 }
