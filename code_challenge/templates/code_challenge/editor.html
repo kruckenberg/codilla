@@ -9,6 +9,18 @@
         <script src="{% static 'js/pythonEditor.js' %}" defer></script>
     {% endif %}
     <div id="csrf-token" data-csrf-token="{{ csrf_token }}"></div>
+    <dialog id="confirm-modal" class="uk-card uk-padding">
+        <div class="flex flex-col place-content-center">
+            <h1 class="uk-card-title uk-text-danger">WARNING</h1>
+            <p class="prose">Are you sure you want to reset the challenge? You'll lose all changes you've made to the code.</p>
+            <div class="flex place-content-center my-1">
+                <button id="confirm-reset-button" class="uk-button uk-button-secondary m-1">Yes, reset</button>
+                <button id="reject-reset-button"
+                        class="uk-button uk-button-primary m-1"
+                        autofocus>Whoops! Don't reset</button>
+            </div>
+        </div>
+    </dialog>
     <div class="relative h-full w-full">
         <div id="code-editor" class="absolute h-full w-full"></div>
         <div class="absolute uk-padding-small uk-padding-remove-bottom end-0 bottom-0 flex flex-row justify-end max-w-fit">

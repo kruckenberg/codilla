@@ -17,6 +17,14 @@ const outputEl = getElementById<HTMLElement>("output");
 const nextChallengeEl = getElementById<HTMLButtonElement>(
   "next-challenge-button",
 );
+const resetConfirmationModalEl =
+  getElementById<HTMLDialogElement>("confirm-modal");
+const confirmResetButtonEl = getElementById<HTMLButtonElement>(
+  "confirm-reset-button",
+);
+const rejectResetButtonEl = getElementById<HTMLButtonElement>(
+  "reject-reset-button",
+);
 const resetCodeButtonEl =
   getElementById<HTMLButtonElement>("reset-code-button");
 const runCodeButtonEl = getElementById<HTMLButtonElement>("run-code-button");
@@ -127,4 +135,13 @@ testCodeButtonEl.addEventListener("click", async () => {
   }
 });
 
-resetCodeButtonEl.addEventListener("click", async () => container.reset());
+resetCodeButtonEl.addEventListener("click", () => {
+  resetConfirmationModalEl.showModal();
+});
+rejectResetButtonEl.addEventListener("click", () => {
+  resetConfirmationModalEl.close();
+});
+confirmResetButtonEl.addEventListener("click", async () => {
+  container.reset();
+  resetConfirmationModalEl.close();
+});
