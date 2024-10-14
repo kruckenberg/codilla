@@ -108,40 +108,47 @@ const container = new CodeContainer({
   io,
   meta: metaJSON,
 });
-container.init();
 
-/*****************************************************
- * Action buttons
- ****************************************************/
-[
-  runCodeButtonEl,
-  saveCodeButtonEl,
-  testCodeButtonEl,
-  resetCodeButtonEl,
-].forEach((el) => {
-  el.addEventListener("click", () => {
-    nextChallengeEl.style.display = "none";
+window.addEventListener("load", async () => {
+  await container.init();
+
+  /*****************************************************
+   * Action buttons
+   ****************************************************/
+  [
+    runCodeButtonEl,
+    saveCodeButtonEl,
+    testCodeButtonEl,
+    resetCodeButtonEl,
+  ].forEach((el) => {
+    el.disabled = false;
   });
-});
 
-runCodeButtonEl.addEventListener("click", async () => container.run());
+  [testCodeButtonEl, confirmResetButtonEl].forEach((el) => {
+    el.addEventListener("click", () => {
+      nextChallengeEl.style.display = "none";
+    });
+  });
 
-saveCodeButtonEl.addEventListener("click", async () => container.save());
+  runCodeButtonEl.addEventListener("click", async () => container.run());
 
-testCodeButtonEl.addEventListener("click", async () => {
-  const passed = await container.test();
-  if (passed) {
-    nextChallengeEl.style.display = "block";
-  }
-});
+  saveCodeButtonEl.addEventListener("click", async () => container.save());
 
-resetCodeButtonEl.addEventListener("click", () => {
-  resetConfirmationModalEl.showModal();
-});
-rejectResetButtonEl.addEventListener("click", () => {
-  resetConfirmationModalEl.close();
-});
-confirmResetButtonEl.addEventListener("click", async () => {
-  container.reset();
-  resetConfirmationModalEl.close();
+  testCodeButtonEl.addEventListener("click", async () => {
+    const passed = await container.test();
+    if (passed) {
+      nextChallengeEl.style.display = "block";
+    }
+  });
+
+  resetCodeButtonEl.addEventListener("click", () => {
+    resetConfirmationModalEl.showModal();
+  });
+  rejectResetButtonEl.addEventListener("click", () => {
+    resetConfirmationModalEl.close();
+  });
+  confirmResetButtonEl.addEventListener("click", async () => {
+    container.reset();
+    resetConfirmationModalEl.close();
+  });
 });

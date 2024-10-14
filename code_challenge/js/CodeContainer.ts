@@ -46,6 +46,7 @@ export class CodeContainer {
   async reset() {
     this.io.overwrite(this.meta.starter_code);
     await this.writeSource(this.meta.starter_code, false);
+    this.io.clearOutput();
     this.api.reset(this.meta.lesson_id);
   }
 
@@ -82,6 +83,7 @@ export class CodeContainer {
     try {
       await this.writeSource(this.io.editorState, this.meta.exports);
     } catch (error) {
+      this.io.logger(error.message);
       return false;
     }
 
