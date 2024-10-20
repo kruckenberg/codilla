@@ -51,7 +51,9 @@ export class CodeContainer {
   }
 
   async run() {
-    this.save();
+    if (this.meta.user.authenticated) {
+      this.save();
+    }
     this.io.clearOutput();
 
     try {
