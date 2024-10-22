@@ -101,6 +101,7 @@ export class CodeContainer {
 
     if (await response.exit) {
       this.io.logger("Something went wrong while running tests");
+      this.io.pipeOutput(response);
       return false;
     }
 
