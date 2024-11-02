@@ -17,7 +17,11 @@ export default {
       typography: {
         DEFAULT: {
           css: {
-            code: { backgroundColor: "#f4f4f4", color: "#c7254e" },
+            code: {
+              backgroundColor: "#f4f4f4",
+              color: "#c7254e",
+              "font-variant-ligatures": "none",
+            },
             "code::before": { content: "" },
             "code::after": { content: "" },
           },
