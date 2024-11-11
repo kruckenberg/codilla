@@ -101,10 +101,19 @@ class Lesson:
             }
         )
 
+        mochaConfig = json.dumps(
+            {"reporter": "json", "reporterOptions": ["output=./test-results.json"]}
+        )
+
         return {
             "package.json": {
                 "file": {
                     "contents": packageJSON,
+                },
+            },
+            ".mocharc.json": {
+                "file": {
+                    "contents": mochaConfig,
                 },
             },
             "index.html": {

@@ -1,5 +1,6 @@
 import { WebContainer } from "@webcontainer/api";
 import stripAnsi from "strip-ansi";
+import { addExports } from "../codeAnalysis";
 import type {
   API,
   FileSystemTree,
@@ -147,6 +148,7 @@ export class WebServer {
 
     if (await response.exit) {
       this.htmlIO.logger("Something went wrong while running tests");
+      this.htmlIO.pipeOutput(response);
       return false;
     }
 
@@ -199,6 +201,12 @@ export class WebServer {
       this.container.fs.writeFile("index.html", this.htmlIO.editorState),
       this.container.fs.writeFile("styles.css", this.cssIO.editorState),
       this.container.fs.writeFile("script.js", this.jsIO.editorState),
+      this.container.fs.writeFile(
+        "script-test.js",
+        this.meta.exports
+          ? addExports(this.jsIO.editorState, this.meta.exports)
+          : this.jsIO.editorState,
+      ),
     ]);
   }
 }
