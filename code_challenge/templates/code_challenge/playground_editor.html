@@ -1,0 +1,101 @@
+{% extends "code_challenge/playground_base.html" %}
+{% load static %}
+{% block editor %}
+    {{ challenge|json_script:"meta-json" }}
+    <script src="{% static 'js/htmlEditor.js' %}" defer></script>
+    <div id="csrf-token" data-csrf-token="{{ csrf_token }}"></div>
+    <dialog id="confirm-modal" class="uk-card uk-padding">
+        <div class="flex flex-col place-content-center">
+            <h1 class="uk-card-title uk-text-danger">WARNING</h1>
+            <p class="prose">Are you sure you want to reset the challenge? You'll lose all changes you've made to the code.</p>
+            <div class="flex place-content-center my-1">
+                <button id="confirm-reset-button" class="uk-button uk-button-secondary m-1">Yes, reset</button>
+                <button id="reject-reset-button"
+                        class="uk-button uk-button-primary m-1"
+                        autofocus>Whoops! Don't reset</button>
+            </div>
+        </div>
+    </dialog>
+    <div class="relative h-full w-full">
+        <ul class="uk-subnav uk-subnav-primary" uk-switcher>
+            <li class="uk-active">
+                <a href="#">index.html</a>
+            </li>
+            <li>
+                <a href="#">styles.css</a>
+            </li>
+            <li>
+                <a href="#>">script.js</a>
+            </li>
+        </ul>
+        <ul class="uk-switcher mt-5">
+            <li class="uk-active">
+                <div id="html-editor" class="absolute h-full w-full"></div>
+            </li>
+            <li>
+                <div id="css-editor" class="absolute h-full w-full"></div>
+            </li>
+            <li>
+                <div id="js-editor" class="absolute h-full w-full"></div>
+            </li>
+        </ul>
+        <div class="absolute uk-padding-small uk-padding-remove-bottom end-0 -bottom-10 flex flex-row justify-end max-w-fit">
+            <button id="next-challenge-button"
+                    class="uk-button uk-button-primary m-1"
+                    style="display: none"
+                    uk-tooltip="Next challenge">
+                <a href="{{ challenge.next_lesson.link }}">
+                    <span uk-icon="icon: chevron-double-right"></span>
+                </a>
+            </button>
+            <button id="run-code-button"
+                    class="uk-button uk-button-primary m-1"
+                    uk-tooltip="Run code"
+                    disabled>
+                <span uk-icon="icon: play"></span>
+            </button>
+            <button id="test-code-button"
+                    class="uk-button uk-button-primary m-1"
+                    uk-tooltip="{% if challenge.has_tests %} Test {% else %} Complete {% endif %}"
+                    disabled>
+                <span uk-icon="icon: check"></span>
+            </button>
+            <button id="save-code-button"
+                    class="uk-button uk-button-default m-1"
+                    {% if not user.is_authenticated %}disabled uk-tooltip="Login to save your code"{% else %} uk-tooltip="Save"{% endif %}
+                    disabled>
+                <span uk-icon="icon: file-edit"></span>
+            </button>
+            <button id="reset-code-button"
+                    class="uk-button uk-button-default m-1"
+                    uk-tooltip="WARNING! Reset"
+                    disabled>
+                <span uk-icon="icon: refresh">
+                </button>
+            </div>
+        </div>
+    {% endblock editor %}
+    <!-- Output -->
+    {% block output %}
+        <div class="h-full w-full">
+            <ul class="uk-switcher mt-5">
+                <li class="uk-active">
+                    <div class="h-full w-full uk-card">
+                        <div id="iframe-placeholder">Loading . . .</div>
+                        <iframe id="served-page" class="h-full w-full" style="display:none;"></iframe>
+                    </div>
+                </li>
+                <li>
+                    <div id="output" class="h-full w-full"></div>
+                </li>
+            </ul>
+        </div>
+    {% endblock output %}
+    <!-- Instructions -->
+    {% block instructions %}
+        <div class="w-full h-full instruct overflow-hidden">
+            <div class="w-full uk-card uk-card-body uk-height-1-1 custom-scrollbar overflow-y-auto">
+                <article class="prose max-w-none text-lg">{{ challenge.instructions |safe }}</article>
+            </div>
+        </div>
+    {% endblock instructions %}
