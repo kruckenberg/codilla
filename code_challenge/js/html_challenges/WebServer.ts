@@ -57,6 +57,14 @@ export class WebServer {
     return installProcess.exit;
   }
 
+  packCode() {
+    const html = this.htmlIO.editorState;
+    const css = this.cssIO.editorState;
+    const js = this.jsIO.editorState;
+
+    return JSON.stringify({ html, css, js });
+  }
+
   async processTestResults() {
     let results: JSONReport;
 
@@ -91,15 +99,8 @@ export class WebServer {
   }
 
   async save() {
-    const html = this.htmlIO.editorState;
-    const css = this.cssIO.editorState;
-    const js = this.jsIO.editorState;
-
     try {
-      await this.api.save(
-        this.meta.lesson_id,
-        JSON.stringify({ html, css, js }),
-      );
+      await this.api.save(this.meta.lesson_id, this.packCode());
     } catch (error) {
       this.htmlIO.logger("Failed to save code");
     }
@@ -138,7 +139,7 @@ export class WebServer {
 
     if (!this.meta.has_tests) {
       if (this.meta.user.authenticated) {
-        this.api.markComplete(this.meta.lesson_id, this.htmlIO.editorState);
+        this.api.markComplete(this.meta.lesson_id, this.packCode());
       }
       window.location.assign(this.meta.next_lesson.link);
       return true;
@@ -156,10 +157,10 @@ export class WebServer {
 
     if (passed) {
       if (this.meta.user.authenticated) {
-        this.api.markComplete(this.meta.lesson_id, this.htmlIO.editorState);
+        this.api.markComplete(this.meta.lesson_id, this.packCode());
       }
     } else {
-      this.api.save(this.meta.lesson_id, this.htmlIO.editorState);
+      this.api.save(this.meta.lesson_id, this.packCode());
     }
 
     return passed;
